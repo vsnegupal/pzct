@@ -1,0 +1,16 @@
+TO-DO LIST
+
+Should start doing:
+- make a function that toggles the value of a parameter "SafehouseAllowLoot" in servertest.ini on reboot
+
+In the near future:
+- need to make an init function that will determine whether the system has the necessary utilities,
+    such as pv and pbzip2 (maybe something else), and if not, it will point to their installation
+    and perform some other checks.
+- create a config file to store variables in, figure out how to fill it in.
+
+After that:
+- implement a line-by-line check of the server-console.txt file
+    to detect messages that a player cannot log in because of an unupdated mod on the server.
+    If there are no messages - save the line number and next time start from it,
+    otherwise restart the server.
