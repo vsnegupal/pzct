@@ -213,14 +213,3 @@ case $1 in
 	-m | message) func_message $*;;
 	*) echo -e "pzct: You must specify one of the options.\nTry 'pzct usage' or 'pzct help' for more information.";;
 esac
-#
-#
-#
-### TO-DO LIST:
-### In the near future:
-### - make a function that toggles the value of a parameter "SafehouseAllowLoot" in servertest.ini on reboot
-### After that:
-### - implement a line-by-line check of the server-console.txt file
-###	to detect messages that a player cannot log in because of an unupdated mod on the server.
-###	If there are no messages - save the line number and next time start from it,
-###	otherwise restart the server.
