@@ -1,4 +1,17 @@
 #!/bin/bash
+###
+# COPYRIGHT AGREEMENT
+#
+# This program is freeware for personal use only.
+# You may modify the program for personal use.
+# You may distribute the unmodified program for non-commercial purposes.
+# You may NOT distribute the program after you modify it.
+# In case of modification, leave a link to my authorship of the original program,
+# which must include the following text: "https://github.com/vsnegupal/pzct"
+#
+# Contact: https://t.me/vsnegupal vsnegupal@gmail.com
+# 2022-2024, by Roman Fuks, Novosibirsk, Russia
+###
 #
 PIDFILE=~/pzct.pid
 [[ -f $PIDFILE ]] && { echo "Seems pzct is already running, PID $(cat $PIDFILE)"; exit 0; }
@@ -6,7 +19,7 @@ echo $$ > $PIDFILE
 trap "rm -f $PIDFILE" EXIT 2 3 15 SIGTSTP
 #
 IFS=$'\n\t'
-#set -euo pipefail #-x #uncomment for debugging
+set -eu #-o pipefail #-x #uncomment for debugging
 #
 SERVDIR=/path/to/pzserver			# e.g. /home/user/pzserver
 ZDIR=/path/to/Zomboid				# e.g. /home/user/Zomboid
@@ -17,9 +30,9 @@ RCONYAML=/path/to/rcon.yaml			# e.g. /home/user/rcon.yaml
 #
 # simple menu entries and functionalities
 func_self-edit() { mcedit ${BASH_SOURCE[0]}; exit 0; }
-func_version() { echo -e "pzct, Project Zomboid Command Tool.  Version 0.9.1, 12-12-2023.\n\n  Copyright (C) 2022-2023 by Roman Fuks, Novosibirsk.\n\n  This program is free software.\n  You may distribute the program for non-commercial purposes;\n  you may modify the program for personal use;\n  you may NOT do both of these things at the same time.\n\n  In case of modification, leave a link to my authorship of the original program.\n\n  Special thanks to:\n  joljaycups from Discord for help with func_message\n\n  Contact:\n  https://t.me/vsnegupal\n  vsnegupal@gmail.com\n"; exit 0; }
-func_usage() { echo "Usage: pzct start | quit | backup | kill | log | help will show you the full list"; exit 0; }
-func_server-console_backup() { cp -v "$LOGFILE" $BAKDIR/logs/log_$(date +%F-%H:%M).txt; }
+func_version() { echo -e "pzct, Project Zomboid Command Tool.  Version 0.9.1, 12-12-2023.\n\n  This program is freeware for personal use only.\n\n  Special thanks to:\n  joljaycups from Discord for help with func_message"; exit 0; }
+func_usage() { echo "Usage: pzct start | quit | backup | kill | restart | log | help will show you the full list"; exit 0; }
+func_server-console_backup() { cp -v "$LOGFILE" $BAKDIR/log_$(date +%F-%H:%M).txt; }
 func_log() { rm -f $PIDFILE; local DEFAULT=25; tail --lines ${1-$DEFAULT} -f "$LOGFILE"; } #usable but rework is needed
 #
 #
@@ -44,8 +57,8 @@ func_kill() {
 			sleep 1
 			timer=$(( $timer + 1 ));
 		done
-	NTFCTN="Process with PID "$PID" killed successfully in $timer seconds." #this command was added just for clarity
-	func_server-console_backup;
+		NTFCTN="Process with PID "$PID" killed successfully in $timer seconds." #this command was added just for clarity
+		func_server-console_backup;
 	fi
 	echo "$NTFCTN"
 	exit 0;
@@ -118,9 +131,9 @@ func_backup() {
 		func_server-console_backup;
 		func_backup_dirs "$ZDIR/Logs" "$BAKDIR/logs/Logs_$(date +%F-%H:%M).tar.bz2"
 		rm -vrf $ZDIR/Logs/*
-		func_backup_dirs "$ZDIR" "/home/fuks/bak.tar.bz2"
+		func_backup_dirs "$ZDIR" "~/bak.tar.bz2"
 		mv -v $BAKDIR/bak.tar.bz2 $BAKDIR/bak.tar.bz2_prev
-		mv -v /home/fuks/bak.tar.bz2 $BAKDIR/bak.tar.bz2
+		mv -v ~/bak.tar.bz2 $BAKDIR/bak.tar.bz2
 	fi
 	exit 0;
 } # end of func_backup
