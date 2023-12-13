@@ -19,7 +19,7 @@ echo $$ > $PIDFILE
 trap "rm -f $PIDFILE" EXIT 2 3 15 SIGTSTP
 #
 IFS=$'\n\t'
-set -eu #-o pipefail #-x #uncomment for debugging
+set -u #-e #-o pipefail #-x #uncomment for debugging
 #
 SERVDIR=/path/to/pzserver			# e.g. /home/user/pzserver
 ZDIR=/path/to/Zomboid				# e.g. /home/user/Zomboid
@@ -66,7 +66,7 @@ func_kill() {
 #
 #
 func_message() {
-#	local RCONYAML=/usr/local/etc/rcon.yaml
+#	local RCONYAML=
 	if [[ $1 == "-m" ]]; then
 		shift;
 	fi
@@ -76,7 +76,7 @@ func_message() {
 #
 #
 func_quit() {
-#	local RCONYAML=/usr/local/etc/rcon.yaml
+#	local RCONYAML=
 	func_pid &>/dev/null;
 	if [[ $? == 0 ]]; then
 		if [[ "$#" -eq 1 || "$2" == "" ]]; then
