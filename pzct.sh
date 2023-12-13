@@ -26,6 +26,7 @@ ZDIR=/path/to/Zomboid				# e.g. /home/user/Zomboid
 LOGFILE=/path/to/Zomboid/server-console.txt	# e.g. /home/user/Zomboid/server-console.txt
 BAKDIR=/path/to/backup/storage			# e.g. /home/user/backup
 CMDDIR=/path/to/steamcmd			# e.g. /home/user/steamcmd
+#RCON=/path/to/rcon/executable			# e.g. /home/user/rcon or /home/user/rcon-cli
 RCONYAML=/path/to/rcon.yaml			# e.g. /home/user/rcon.yaml
 #
 # simple menu entries and functionalities
@@ -39,8 +40,7 @@ func_log() { rm -f $PIDFILE; local DEFAULT=25; tail --lines ${1-$DEFAULT} -f "$L
 func_pid() {
 	PID=$(pgrep --full "ProjectZomboid64")
 	RETCODE="$?"
-	[[ -z $PID ]]\
-		&& PID="Seems the server isn't running. Operation aborted."\
+	[[ -z $PID ]] && PID="Seems the server isn't running. Operation aborted."\
 		|| MSG_IF_RUNNING="Seems the server is running with PID "$PID". You should stop it first. Operation aborted.";
 	echo "$PID"
 	return $RETCODE;
