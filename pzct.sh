@@ -131,9 +131,9 @@ func_backup() {
 		func_server-console_backup;
 		func_backup_dirs "$ZDIR/Logs" "$BAKDIR/logs/Logs_$(date +%F-%H:%M).tar.bz2"
 		rm -vrf $ZDIR/Logs/*
-		func_backup_dirs "$ZDIR" "~/bak.tar.bz2"
+		func_backup_dirs "$ZDIR" "$HOME/bak.tar.bz2"
 		mv -v $BAKDIR/bak.tar.bz2 $BAKDIR/bak.tar.bz2_prev
-		mv -v ~/bak.tar.bz2 $BAKDIR/bak.tar.bz2
+		mv -v $HOME/bak.tar.bz2 $BAKDIR/bak.tar.bz2
 	fi
 	exit 0;
 } # end of func_backup
