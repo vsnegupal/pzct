@@ -26,7 +26,7 @@ ZDIR=/path/to/Zomboid				# e.g. /home/user/Zomboid
 LOGFILE=/path/to/Zomboid/server-console.txt	# e.g. /home/user/Zomboid/server-console.txt
 BAKDIR=/path/to/backup/storage			# e.g. /home/user/backup
 CMDDIR=/path/to/steamcmd			# e.g. /home/user/steamcmd
-#RCON=/path/to/rcon/executable			# e.g. /home/user/rcon or /home/user/rcon-cli
+RCON=/path/to/rcon/executable			# e.g. /home/user/rcon or /home/user/rcon-cli
 RCONYAML=/path/to/rcon.yaml			# e.g. /home/user/rcon.yaml
 #
 # simple menu entries and functionalities
@@ -71,7 +71,7 @@ func_message() {
 		shift;
 	fi
 	local MESSAGE="$*"
-	echo -e \'servermsg \"$MESSAGE\"\' | xargs rcon -c $RCONYAML &>/dev/null;
+	echo -e \'servermsg \"$MESSAGE\"\' | xargs $RCON -c $RCONYAML &>/dev/null;
 } # end of func_message
 #
 #
@@ -104,7 +104,7 @@ func_quit() {
 			echo "With --now option, the server will be stopped immediately without any notifications.";
 		fi
 #
-		rcon -c $RCONYAML quit &>/dev/null && echo "'Quit' command has been sent" >&2
+		$RCON -c $RCONYAML quit &>/dev/null && echo "'Quit' command has been sent" >&2
 		while $(kill -0 $PID &>/dev/null); do
 			sleep 1;
 		done;
