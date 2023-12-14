@@ -119,21 +119,25 @@ func_quit() {
 func_backup() {
 
 	func_backup_dirs() {
-		tar cf - "$1" -P\
-			| pv -s $(du -sb "$1" | awk '{print $1}')\
-			| pbzip2 > "$2"
-}
+		tar -czf "$2" "$1"	#it's highly likely to work for everyone
+#
+#		tar cf - "$1" -P\					#Advanced option for the CLI,
+#			| pv -s $(du -sb "$1" | awk '{print $1}')\	#shows archiving progress,
+#			| pbzip2 > "$2"					#and the operation takes less time
+									#due to the use of pbzip2.
+									#Requires pbzip2 and pv installed.
+	}
 #
 	func_pid &>/dev/null;
 	if [[ "$?" == "0" ]]; then
 		echo "$MSG_IF_RUNNING"
 	else
 		func_server-console_backup;
-		func_backup_dirs "$ZDIR/Logs" "$BAKDIR/logs/Logs_$(date +%F-%H:%M).tar.bz2"
+		func_backup_dirs "$ZDIR/Logs" "$BAKDIR/logs/Logs_$(date +%F-%H:%M).tar.gz"
 		rm -vrf $ZDIR/Logs/*
-		func_backup_dirs "$ZDIR" "$HOME/bak.tar.bz2"
-		mv -v $BAKDIR/bak.tar.bz2 $BAKDIR/bak.tar.bz2_prev
-		mv -v $HOME/bak.tar.bz2 $BAKDIR/bak.tar.bz2
+		func_backup_dirs "$ZDIR" "$HOME/bak.tar.gz"
+		mv -v $BAKDIR/bak.tar.gz $BAKDIR/bak.tar.gz_prev
+		mv -v $HOME/bak.tar.gz $BAKDIR/bak.tar.gz
 	fi
 	exit 0;
 } # end of func_backup
