@@ -124,7 +124,7 @@ func_backup() {
       tar cf - "$1" -P | pv -s $(du -sb "$1" | awk '{print $1}') | pbzip2 > "$2"
     else
       EXTENSION=gz
-      tar -cvzf "$2" "$1";    #its highly likely to work for everyone
+      tar -cvzf "$2" "$1";    #it's highly likely to work for everyone
     fi
     } # end of func_backup_dirs
 #
@@ -133,7 +133,7 @@ func_backup() {
     echo "$MSG_IF_RUNNING"
   else
     func_server-console_backup;
-    func_backup_dirs "" "" &>/dev/null;
+    func_backup_dirs "" "" &>/dev/null;    #I haven't figured out how to initialize $EXTENSION variable any other way yet.
     func_backup_dirs "$ZDIR"/Logs "$BAKDIR"/logs/Logs_"$(date +%F-%H:%M)".tar."$EXTENSION"
     rm -vrf "$ZDIR"/Logs/*
     func_backup_dirs "$ZDIR" "$HOME"/bak.tar."$EXTENSION"
