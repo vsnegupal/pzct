@@ -13,7 +13,7 @@
 # 2022-2024, by Roman Fuks, Novosibirsk, Russia
 ###
 #
-PIDFILE=~/pzct.pid
+PIDFILE="$HOME"/pzct.pid
 [[ -f $PIDFILE ]] && { echo "Seems pzct is already running, PID $(cat $PIDFILE)"; exit 0; }
 echo $$ > $PIDFILE
 trap "rm -f $PIDFILE" EXIT 2 3 15 SIGTSTP
@@ -112,7 +112,6 @@ func_quit() {
   else
     echo "$PID";
   fi
-  exit 0;
   } # end of func_quit
 #
 func_backup() {
@@ -133,14 +132,13 @@ func_backup() {
     echo "$MSG_IF_RUNNING"
   else
     func_server-console_backup;
-    func_backup_dirs "" "" &>/dev/null;    #I haven't figured out how to initialize $EXTENSION variable any other way yet.
+    func_backup_dirs "" "" &>/dev/null;
     func_backup_dirs "$ZDIR"/Logs "$BAKDIR"/logs/Logs_"$(date +%F-%H:%M)".tar."$EXTENSION"
     rm -vrf "$ZDIR"/Logs/*
     func_backup_dirs "$ZDIR" "$HOME"/bak.tar."$EXTENSION"
     mv -v "$BAKDIR"/bak.tar."$EXTENSION" "$BAKDIR"/bak.tar."$EXTENSION"_prev
     mv -v "$HOME"/bak.tar."$EXTENSION" "$BAKDIR"/bak.tar."$EXTENSION"
   fi
-  exit 0;
   } # end of func_backup
 #
 func_start() {
@@ -153,7 +151,6 @@ func_start() {
     #cp -v -t $ZDIR/Server $BAKDIR/servertest_SandboxVars.lua $BAKDIR/servertest.ini
     nohup $SERVDIR/start-server.sh &>/dev/null &
   fi
-  exit 0;
   } # end of func_start
 #
 func_serverupdate() {
@@ -169,7 +166,7 @@ func_serverupdate() {
   exit 0;
   } # end of func_serverupdate
 #
-func_restart() { func_quit & wait $! && func_backup & wait $! && func_start; }
+func_restart() { func_quit "quit" && func_backup && func_start; }
  # end of func_restart
 #
 func_help() {
@@ -211,10 +208,10 @@ func_help() {
 ### menu section
 #
   case $1 in
-    start) func_start;;
-    -q | quit) func_quit $@;;
-    backup) func_backup;;
-    restart) func_restart;;
+    start) func_start; exit 0;;
+    -q | quit) func_quit $@; exit 0;;
+    backup) func_backup; exit 0;;
+    restart) func_restart; exit 0;;
     -l | log) func_log $2;;
     -p | pid) func_pid;;
     kill) func_kill;;
