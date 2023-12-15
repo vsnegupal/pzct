@@ -165,6 +165,9 @@ func_serverupdate() {
   exit 0;
   } # end of func_serverupdate
 #
+func_restart() { func_quit & wait $! && func_backup & wait $! && func_start }
+ # end of func_restart
+#
 func_help() {
   echo -e "\
   usage: pzct command [options]
@@ -177,6 +180,8 @@ func_help() {
                             with chat notifications and a two-minute delay (can be modified)
 
   -q --now, quit --now    the same command will be sent immediately without notifications
+
+  restart                 sequentially executes stop, backup and start, done mostly for cron
 
   kill                    immediately terminate the server process (without using rcon)
 
@@ -205,6 +210,7 @@ func_help() {
     start) func_start;;
     -q | quit) func_quit $@;;
     backup) func_backup;;
+    restart) func_restart;;
     -l | log) func_log $2;;
     -p | pid) func_pid;;
     kill) func_kill;;
