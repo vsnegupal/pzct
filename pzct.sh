@@ -182,7 +182,7 @@ func_help() {
 
   -q --now, quit --now    the same command will be sent immediately without notifications
 
-  restart                 sequentially executes stop, backup and start, done mostly for cron
+  restart                 sequentially executes quit, backup and start, done mostly for cron
 
   kill                    immediately terminate the server process (without using rcon)
 
