@@ -118,11 +118,14 @@ func_quit() {
 func_backup() {
 
   func_backup_dirs() {
-    tar -cvzf "$2" "$1"    #it's highly likely to work for everyone
-#
-    #tar cf - "$1" -P\                               #Advanced option for the CLI, shows archiving progress, and the operation takes less time due to the use of pbzip2.
-      #| pv -s $(du -sb "$1" | awk '{print $1}')\    #Requires pbzip2 and pv installed.
-      #| pbzip2 > "$2"
+    if [ -n "$(which pv 2>/dev/null)" -a -n "$(which pbzip2 2>/dev/null)" ]; then
+      #Advanced option for the CLI, shows archiving progress, takes less time due to the use of pbzip2. Requires pbzip2 and pv installed.
+      EXTENSION=bz2
+      tar cf - "$1" -P | pv -s $(du -sb "$1" | awk '{print $1}') | pbzip2 > "$2"
+    else
+      EXTENSION=gz
+      tar -cvzf "$2" "$1";    #its highly likely to work for everyone
+    fi
     } # end of func_backup_dirs
 #
   func_pid &>/dev/null;
@@ -130,11 +133,12 @@ func_backup() {
     echo "$MSG_IF_RUNNING"
   else
     func_server-console_backup;
-    func_backup_dirs "$ZDIR/Logs" "$BAKDIR/logs/Logs_$(date +%F-%H:%M).tar.gz"
-    rm -vrf $ZDIR/Logs/*
-    func_backup_dirs "$ZDIR" "$HOME/bak.tar.gz"
-    mv -v $BAKDIR/bak.tar.gz $BAKDIR/bak.tar.gz_prev
-    mv -v $HOME/bak.tar.gz $BAKDIR/bak.tar.gz
+    func_backup_dirs "" "" &>/dev/null;
+    func_backup_dirs "$ZDIR"/Logs "$BAKDIR"/logs/Logs_"$(date +%F-%H:%M)".tar."$EXTENSION"
+    rm -vrf "$ZDIR"/Logs/*
+    func_backup_dirs "$ZDIR" "$HOME"/bak.tar."$EXTENSION"
+    mv -v "$BAKDIR"/bak.tar."$EXTENSION" "$BAKDIR"/bak.tar."$EXTENSION"_prev
+    mv -v "$HOME"/bak.tar."$EXTENSION" "$BAKDIR"/bak.tar."$EXTENSION"
   fi
   exit 0;
   } # end of func_backup
@@ -165,7 +169,7 @@ func_serverupdate() {
   exit 0;
   } # end of func_serverupdate
 #
-func_restart() { func_quit & wait $! && func_backup & wait $! && func_start }
+func_restart() { func_quit & wait $! && func_backup & wait $! && func_start; }
  # end of func_restart
 #
 func_help() {
