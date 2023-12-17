@@ -20,7 +20,7 @@ trap "rm -f $PIDFILE" EXIT 2 3 15 SIGTSTP
 #
 IFS=$'\n\t'
 #
-set -u
+#set -u
 #set -o pipefail
 #set -x
 #set -e
@@ -83,6 +83,7 @@ func_quit() {
       #arrays
         arr_sec=(110 10)
         arr_msg=(
+### INGAME NOTIFICATIONS BELOW
           "The server will be restarted in 2 minutes. Take a safe position."
           "The server will restart in 10 seconds. Connect again in 5 minutes."
         )
