@@ -25,13 +25,7 @@ IFS=$'\n\t'
 #set -x
 #set -e
 #
-SERVDIR=/path/to/pzserver                      # e.g. /home/user/pzserver
-ZDIR=/path/to/Zomboid                          # e.g. /home/user/Zomboid
-LOGFILE=/path/to/Zomboid/server-console.txt    # e.g. /home/user/Zomboid/server-console.txt
-BAKDIR=/path/to/backup/storage                 # e.g. /home/user/backup
-CMDDIR=/path/to/steamcmd                       # e.g. /home/user/steamcmd
-RCON=/path/to/rcon/executable                  # e.g. /home/user/rcon or /home/user/rcon-cli
-RCONYAML=/path/to/rcon.yaml                    # e.g. /home/user/rcon.yaml
+. pzct.conf
 #
 # simple menu entries and functionalities
 func_self-edit() { mcedit ${BASH_SOURCE[0]}; exit 0; }
