@@ -6,8 +6,7 @@
 # You may modify the program for personal use.
 # You may distribute the unmodified program for non-commercial purposes.
 # You may NOT distribute the program after you modify it.
-# In case of modification, leave a link to my authorship of the original program,
-# which must include the following text: "https://github.com/vsnegupal/pzct"
+# After modification, leave the text "https://github.com/vsnegupal/pzct" next to shebang in your script.
 #
 # Contact: https://t.me/vsnegupal vsnegupal@gmail.com
 # 2022-2024, by Roman Fuks, Novosibirsk, Russia
