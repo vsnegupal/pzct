@@ -14,7 +14,7 @@
 ###
 #
 PIDFILE="$HOME"/pzct.pid
-[[ -f $PIDFILE ]] && { echo "Seems pzct is already running, PID $(cat $PIDFILE)"; exit 0; }
+[ -f $PIDFILE ] && { echo "Seems pzct is already running, PID $(cat $PIDFILE)"; exit 0; }
 echo $$ > $PIDFILE
 trap "rm -f $PIDFILE" EXIT 2 3 15 SIGTSTP
 #
@@ -37,7 +37,7 @@ func_log() { rm -f $PIDFILE; local DEFAULT=25; tail --lines ${1-$DEFAULT} -f "$L
 func_pid() {
   PID=$(pgrep --full "ProjectZomboid64")
   RETCODE="$?"
-  [[ -z $PID ]] && PID="Seems the server isn't running. Operation aborted."\
+  [ -z $PID ] && PID="Seems the server isn't running. Operation aborted."\
     || MSG_IF_RUNNING="Seems the server is running with PID "$PID". You should stop it first. Operation aborted.";
   echo "$PID"
   return $RETCODE;
@@ -46,7 +46,7 @@ func_pid() {
 func_kill() {
   func_pid &>/dev/null;
   local NTFCTN="$PID"
-  if [[ $RETCODE == 0 ]]; then
+  if [ $RETCODE -eq 0 ]; then
     timer=0
     kill -9 $PID
     while $(kill -0 $PID &>/dev/null); do
@@ -72,7 +72,7 @@ func_message() {
 func_quit() {
   #local RCONYAML=
   func_pid &>/dev/null;
-  if [[ $? == 0 ]]; then
+  if [ $? -eq 0 ]; then
     if [[ "$#" -eq 1 || "$2" == "" ]]; then
       #arrays
         arr_sec=(110 10)
@@ -123,7 +123,7 @@ func_backup() {
     } # end of func_backup_dirs
 #
   func_pid &>/dev/null;
-  if [[ "$?" == "0" ]]; then
+  if [ $? -eq 0 ]]; then
     echo "$MSG_IF_RUNNING"
   else
     func_server-console_backup;
@@ -150,7 +150,7 @@ func_start() {
 #
 func_serverupdate() {
   func_pid &>/dev/null;
-  if [[ "$?" == "0" ]]; then
+  if [ $? -eq 0 ]; then
     echo "$MSG_IF_RUNNING"
   else
     #local CMDDIR=
@@ -181,10 +181,7 @@ func_help() {
 
   kill                    immediately terminate the server process (without using rcon)
 
-  backup                  pack \"/Zomboid/Logs\" directory into an archive and move it to a specific location,
-                            then delete all files from \"/Zomboid/Logs\" directory.
-                            After that, pack whole \"/Zomboid\" directory into an archive and move it to a specific location.
-                            (usually there are two of \"/Zomboid\" archives - the last and the previous one)
+  backup                  perform a backup
 
   -l, log [N]             display the last N lines of server-console.txt and then monitors the file (25 lines by default)
 
