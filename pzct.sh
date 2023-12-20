@@ -36,7 +36,7 @@ func_log() { rm -f $PIDFILE; local DEFAULT=25; tail --lines ${1-$DEFAULT} -f "$L
 func_pid() {
   PID=$(pgrep --full "ProjectZomboid64")
   RETCODE="$?"
-  [ -z $PID ] && PID="Seems the server isn't running. Operation aborted."\
+  [ -z "$PID" ] && PID="Seems the server isn't running. Operation aborted."\
     || MSG_IF_RUNNING="Seems the server is running with PID "$PID". You should stop it first. Operation aborted.";
   echo "$PID"
   return $RETCODE;
