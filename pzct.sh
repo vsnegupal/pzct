@@ -12,7 +12,16 @@
 # 2022-2024, by Roman Fuks, Novosibirsk, Russia
 ###
 #
-PIDFILE="$HOME"/pzct.pid
+MY_PATH="$(dirname -- "${BASH_SOURCE[0]}")"    # relative
+MY_PATH="$(cd -- "$MY_PATH" && pwd)"    # absolutized and normalized
+if [[ -z "$MY_PATH" ]] ; then
+  # error; for some reason, the path is not accessible
+  # to the script (e.g. permissions re-evaled after suid)
+  exit 1    # fail
+fi
+echo "$MY_PATH"
+#
+PIDFILE="$MY_PATH"/pzct.pid
 [ -f $PIDFILE ] && { echo "Seems pzct is already running, PID $(cat $PIDFILE)"; exit 0; }
 echo $$ > $PIDFILE
 trap "rm -f $PIDFILE" EXIT 2 3 15 SIGTSTP
@@ -24,7 +33,7 @@ IFS=$'\n\t'
 #set -x
 #set -e
 #
-. pzct.conf
+source "$MY_PATH"/pzct.conf
 #
 # simple menu entries and functionalities
 func_self-edit() { mcedit ${BASH_SOURCE[0]}; exit 0; }
@@ -61,7 +70,7 @@ func_kill() {
 #
 func_message() {
   #local RCONYAML=
-  if [[ $1 == "-m" ]]; then
+  if [ $1 == "-m" ]; then
     shift;
   fi
   local MESSAGE="$*"
@@ -141,8 +150,8 @@ func_start() {
   if [[ "$RETCODE" == "0" ]]; then
     echo "$MSG_IF_RUNNING"
   else
-    #cp -v $BAKDIR/ProjectZomboid64.json $SERVDIR
-    #cp -v -t $ZDIR/Server $BAKDIR/servertest_SandboxVars.lua $BAKDIR/servertest.ini
+    cp -v $BAKDIR/ProjectZomboid64.json $SERVDIR
+    cp -v -t $ZDIR/Server $BAKDIR/servertest_SandboxVars.lua $BAKDIR/servertest.ini
     nohup $SERVDIR/start-server.sh &>/dev/null &
   fi
   } # end of func_start
