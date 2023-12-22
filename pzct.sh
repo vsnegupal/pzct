@@ -131,7 +131,7 @@ func_backup() {
     } # end of func_backup_dirs
 #
   func_pid &>/dev/null;
-  if [ $? -eq 0 ]]; then
+  if [ $? -eq 0 ]; then
     echo "$MSG_IF_RUNNING"
   else
     func_server-console_backup;
