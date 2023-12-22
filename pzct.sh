@@ -150,8 +150,8 @@ func_start() {
   if [[ "$RETCODE" == "0" ]]; then
     echo "$MSG_IF_RUNNING"
   else
-    cp -v $BAKDIR/ProjectZomboid64.json $SERVDIR
-    cp -v -t $ZDIR/Server $BAKDIR/servertest_SandboxVars.lua $BAKDIR/servertest.ini
+    #cp -v $BAKDIR/ProjectZomboid64.json $SERVDIR
+    #cp -v -t $ZDIR/Server $BAKDIR/servertest_SandboxVars.lua $BAKDIR/servertest.ini
     nohup $SERVDIR/start-server.sh &>/dev/null &
   fi
   } # end of func_start
