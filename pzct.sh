@@ -120,9 +120,7 @@ func_quit() {
 func_backup() {
 
   func_backup_dirs() {
-    if [\
-    #-n "$(which pv 2>/dev/null)" -a\
-    -n "$(which pbzip2 2>/dev/null)" ]; then
+    if [ -n "$(which pv 2>/dev/null)" -a -n "$(which pbzip2 2>/dev/null)" ]; then
       #Advanced option for the CLI, shows archiving progress, takes less time due to the use of pbzip2. Requires pbzip2 and pv installed.
       EXTENSION=bz2
       tar cf - "$1" -P | pv -s $(du -sb "$1" | awk '{print $1}') | pbzip2 > "$2"
