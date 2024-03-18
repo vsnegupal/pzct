@@ -19,7 +19,7 @@ if [[ -z "$MY_PATH" ]] ; then
   # to the script (e.g. permissions re-evaled after suid)
   exit 1    # fail
 fi
-echo "$MY_PATH"
+#echo "$MY_PATH"
 #
 PIDFILE="$MY_PATH"/pzct.pid
 [ -f $PIDFILE ] && { echo "Seems pzct is already running, PID $(cat $PIDFILE)"; exit 0; }
