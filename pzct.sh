@@ -37,8 +37,8 @@ source "$MY_PATH"/pzct.conf
 #
 # simple menu entries and functionalities
 func_self-edit() { mcedit ${BASH_SOURCE[0]}; exit 0; }
-func_version() { echo -e "pzct, Project Zomboid Command Tool.  Version 0.9.1, 12-12-2023.\n\n  This program is freeware for personal use only.\n\n  Special thanks to:\n  joljaycups from Discord for help with func_message"; exit 0; }
-func_usage() { echo "Usage: pzct start | quit | backup | kill | restart | log | help will show you the full list"; exit 0; }
+func_version() { echo -e "pzct, Project Zomboid Command Tool.  Version 1.0, 19-04-2024.\n\n  This program is freeware for personal use only.\n\n  Special thanks to:\n  joljaycups from Discord for help with func_message"; exit 0; }
+func_usage() { echo "Usage: pzct start | quit | backup | checkmods | restart | log | help will show you the full list"; exit 0; }
 func_server-console_backup() { cp -v "$LOGFILE" $BAKDIR/logs/log_$(date +%F-%H:%M).txt; }
 func_log() { rm -f $PIDFILE; local DEFAULT=25; tail --lines ${1-$DEFAULT} -f "$LOGFILE"; } #usable but rework is needed
 #
@@ -138,12 +138,7 @@ func_backup() {
     func_backup_dirs "" "" &>/dev/null;
     func_backup_dirs "$ZDIR"/Logs "$BAKDIR"/logs/Logs_"$(date +%F-%H:%M)".tar."$EXTENSION"
     rm -vrf "$ZDIR"/Logs/*
-    func_backup_dirs "$ZDIR" "$HOME"/bak.tar."$EXTENSION"
-    mv -v "$BAKDIR"/bak.tar."$EXTENSION" "$BAKDIR"/bak.tar."$EXTENSION"_prev
-    mv -v "$HOME"/bak.tar."$EXTENSION" "$BAKDIR"/bak.tar."$EXTENSION"
-    #cp -v $SERVDIR/ProjectZomboid64.json $BAKDIR
-    #cp -v -t $BAKDIR $ZDIR/Server/servertest_SandboxVars.lua $ZDIR/Zomboid/servertest.ini
-
+    func_backup_dirs "$ZDIR" "$BAKDIR"/Zomboid_backup_"$(date +%F-%H:%M)".tar."$EXTENSION"
   fi
   } # end of func_backup
 #
@@ -153,8 +148,8 @@ func_start() {
   if [[ "$RETCODE" == "0" ]]; then
     echo "$MSG_IF_RUNNING"
   else
-    #cp -v $BAKDIR/ProjectZomboid64.json $SERVDIR
-    #cp -v -t $ZDIR/Server $BAKDIR/servertest_SandboxVars.lua $BAKDIR/servertest.ini
+#    cp -v $BAKDIR/ProjectZomboid64.json $SERVDIR
+#    cp -v -t $ZDIR/Server $BAKDIR/servertest_SandboxVars.lua $BAKDIR/servertest.ini
     nohup $SERVDIR/start-server.sh &>/dev/null &
   fi
   } # end of func_start
@@ -172,8 +167,39 @@ func_serverupdate() {
   exit 0;
   } # end of func_serverupdate
 #
+#######
+
 func_restart() { func_quit "quit" && func_backup && func_start; }
- # end of func_restart
+
+#######
+#
+func_checkmods() {
+  func_pid &>/dev/null;
+  if [ $? -eq 0 ]; then
+#
+    if [[ ! -e $SERVDIR/mods_status ]]; then
+      touch $SERVDIR/mods_status
+    else
+      cat /dev/null > $SERVDIR/mods_status
+    fi
+    $RCON -c $RCONYAML checkModsNeedUpdate &>/dev/null
+      if which strace &> /dev/null; then
+        timeout 10s strace -p $PID -e write -s 200 &> $SERVDIR/mods_status
+      else
+      sleep 10
+      tail -n 1000 $LOGFILE &> $SERVDIR/mods_status
+      fi
+    if cat $SERVDIR/mods_status | grep -q "Mods need update"; then
+      func_restart;
+    else
+      echo -e "Nothing to do.\n"
+    fi
+#
+  else
+    echo "$PID";
+  fi
+  exit 0;
+  } # end of func_checkmods
 #
 func_help() {
   echo -e "\
@@ -188,7 +214,9 @@ func_help() {
 
   -q --now, quit --now    the same command will be sent immediately without notifications
 
-  restart                 sequentially executes quit, backup and start, done mostly for cron
+  restart                 sequentially execute quit, backup and start, done mostly for cron
+
+  checkmods               check if mods need update or not
 
   kill                    immediately terminate the server process (without using rcon)
 
@@ -211,10 +239,12 @@ func_help() {
 ### menu section
 #
   case $1 in
+    checkmods) func_checkmods;;
     start) func_start; exit 0;;
     -q | quit) func_quit $@; exit 0;;
     backup) func_backup; exit 0;;
     restart) func_restart; exit 0;;
+    checkmods) func_checkmods;;
     -l | log) func_log $2;;
     -p | pid) func_pid;;
     kill) func_kill;;
