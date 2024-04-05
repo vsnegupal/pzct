@@ -22,7 +22,7 @@ fi
 echo -e "$MY_PATH/pzct.sh will use $MY_PATH/pzct.conf"
 #
 PIDFILE="$MY_PATH"/pzct.pid
-[ -f $PIDFILE ] && { echo "Seems pzct is already running, PID $(cat $PIDFILE)"; exit 0; }
+[ -f $PIDFILE ] && { echo "Seems pzct is already running with PID $(cat $PIDFILE)"; exit 0; }
 echo $$ > $PIDFILE
 trap "rm -f $PIDFILE" EXIT 2 3 15 SIGTSTP
 #
@@ -107,7 +107,7 @@ func_quit() {
       echo "With --now option, the server will be stopped immediately without any notifications.";
     fi
 #
-    $RCON -c $RCONYAML quit &>/dev/null && echo "'Quit' command has been sent" >&2
+    $RCON -c $RCONYAML quit &>/dev/null && echo "'Quit' command has been sent..." >&2
     while $(kill -0 $PID &>/dev/null); do
       sleep 1;
     done;
