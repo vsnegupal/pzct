@@ -39,7 +39,7 @@ source "$MY_PATH"/pzct.conf
 func_self-edit() { mcedit ${BASH_SOURCE[0]}; exit 0; }
 func_version() { echo -e "pzct, Project Zomboid Command Tool.  Version 1.0, 19-04-2024.\n\n  This program is freeware for personal use only.\n\n  Special thanks to:\n  joljaycups from Discord for help with func_message"; exit 0; }
 func_usage() { echo "Usage: pzct start | quit | backup | checkmods | restart | log | help will show you the full list"; exit 0; }
-func_server-console_backup() { cp -v "$LOGFILE" $BAKDIR/server-console.txt_$(date +%F-%H:%M).txt; }
+func_server-console_backup() { cp -v "$LOGFILE" $BAKDIR/server-console_$(date +%F-%H:%M).txt; }
 func_log() { rm -f $PIDFILE; local DEFAULT=25; tail --lines ${1-$DEFAULT} -f "$LOGFILE"; } #usable but rework is needed
 #
 func_pid() {
