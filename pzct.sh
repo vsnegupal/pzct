@@ -111,6 +111,7 @@ func_quit() {
     while $(kill -0 $PID &>/dev/null); do
       sleep 1;
     done;
+    echo -e "The server has been stopped..."
     func_server-console_backup;
   else
     echo "$PID";
@@ -139,6 +140,7 @@ func_backup() {
     func_backup_dirs "$ZDIR"/Logs "$BAKDIR"/logs/Logs_"$(date +%F-%H:%M)".tar."$EXTENSION"
     rm -vrf "$ZDIR"/Logs/*
     func_backup_dirs "$ZDIR" "$BAKDIR"/Zomboid_backup_"$(date +%F-%H:%M)".tar."$EXTENSION"
+    echo -e "The backup was done..."
   fi
   } # end of func_backup
 #
@@ -148,9 +150,14 @@ func_start() {
   if [[ "$RETCODE" == "0" ]]; then
     echo "$MSG_IF_RUNNING"
   else
-#    cp -v $BAKDIR/ProjectZomboid64.json $SERVDIR
-#    cp -v -t $ZDIR/Server $BAKDIR/servertest_SandboxVars.lua $BAKDIR/servertest.ini
-    nohup $SERVDIR/start-server.sh &>/dev/null &
+    if [[ $FILES == "1" ]]; then
+      echo -e "FILES = $FILES"
+      cp -v $BAKDIR/ProjectZomboid64.json $SERVDIR
+      cp -v -t $ZDIR/Server $BAKDIR/servertest_SandboxVars.lua $BAKDIR/servertest.ini
+    else
+      echo -e "Starting the server..."
+      nohup $SERVDIR/start-server.sh &>/dev/null &
+    fi
   fi
   } # end of func_start
 #
