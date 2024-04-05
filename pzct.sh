@@ -257,15 +257,21 @@ func_help() {
 
   restart                 sequentially execute quit, backup and start, done mostly for cron
 
+  -m text, message text   displays a message \"text\" in chat and in the middle of the screen
+
   checkmods               check if mods need update or not
 
   kill                    immediately terminate the server process (without using rcon)
 
   backup                  perform a backup
 
-  -l, log [N]             display the last N lines of server-console.txt and then monitors the file (25 lines by default)
+  -l N, log N             display the last N lines of server-console.txt and then monitors the file (25 lines by default)
 
   serverupdate            update the server application with steamcmd.sh
+
+  players                 list all connected players
+
+  thunder                 thunder
 
   -p, pid                 just show PID of the server process (if it's running)
 
@@ -273,14 +279,13 @@ func_help() {
 
   -v, version             show the program version and its brief description
 
-  -h, help                show this message";
+  -h, help                show this message\n";
   exit 0;
   } # end of func_help
 #
 ### menu section
 #
   case $1 in
-    checkmods) func_checkmods;;
     start) func_start; exit 0;;
     -q | quit) func_quit $@; exit 0;;
     backup) func_backup; exit 0;;
