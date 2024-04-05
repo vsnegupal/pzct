@@ -190,6 +190,8 @@ func_checkmods() {
       tail -n 1000 $LOGFILE &> $SERVDIR/mods_status
       fi
     if cat $SERVDIR/mods_status | grep -q "Mods need update"; then
+      echo -e "Mods need to be updated, performing restart in 10 seconds.\n"
+      sleep 10
       func_restart;
     else
       echo -e "Nothing to do.\n"
