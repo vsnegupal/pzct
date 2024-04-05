@@ -88,18 +88,18 @@ func_players() {
   fi
   } # end of func_players
 #
-func_thunder() {
+func_thunder() { # I love thunder sounds, and I will make everyone love it.
   func_pid &>/dev/null;
   if [ $? -eq 0 ]; then
 #
     list_players=$(func_players)
     mapfile -t array < <(echo "$list_players" | tail -n +2 | sed 's/^.*-//')
-    #echo ${array[@]}
-    if [[ ${#array[@]} -gt 0 ]]; then
-      #echo ${#array[@]}
-      random_index=$(( $RANDOM % ${#array[@]} ))
-      random_element=${array[$random_index]}
-      $RCON -c $RCONYAML "thunder $random_element"
+    #echo ${array[@]}                              # Actually, when you run "thunder username",
+    if [[ ${#array[@]} -gt 0 ]]; then              # it doesn't sound only for the player
+      #echo ${#array[@]}                           # with the specified username, but for everyone.
+      random_index=$(( $RANDOM % ${#array[@]} ))   # However, there is no "all" option for rcon-cli,
+      random_element=${array[$random_index]}       # and you have to specify an username.
+      $RCON -c $RCONYAML "thunder $random_element" # Therefore, we pick a random one.
     fi
 #
   else
@@ -271,7 +271,7 @@ func_help() {
 
   players                 list all connected players
 
-  thunder                 thunder
+  thunder                 thunder sounds for everyone
 
   -p, pid                 just show PID of the server process (if it's running)
 
