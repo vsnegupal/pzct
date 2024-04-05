@@ -111,7 +111,7 @@ func_quit() {
     while $(kill -0 $PID &>/dev/null); do
       sleep 1;
     done;
-    echo -e "The server has been stopped..."
+    echo -e "The server has been stopped...\n"
     func_server-console_backup;
   else
     echo "$PID";
@@ -140,7 +140,7 @@ func_backup() {
     func_backup_dirs "$ZDIR"/Logs "$BAKDIR"/logs/Logs_"$(date +%F-%H:%M)".tar."$EXTENSION"
     rm -vrf "$ZDIR"/Logs/*
     func_backup_dirs "$ZDIR" "$BAKDIR"/Zomboid_backup_"$(date +%F-%H:%M)".tar."$EXTENSION"
-    echo -e "The backup was done..."
+    echo -e "The backup was done...\n"
   fi
   } # end of func_backup
 #
@@ -155,7 +155,7 @@ func_start() {
       cp -v $BAKDIR/ProjectZomboid64.json $SERVDIR
       cp -v -t $ZDIR/Server $BAKDIR/servertest_SandboxVars.lua $BAKDIR/servertest.ini
     else
-      echo -e "Starting the server..."
+      echo -e "Starting the server...\n"
       nohup $SERVDIR/start-server.sh &>/dev/null &
     fi
   fi
@@ -197,11 +197,11 @@ func_checkmods() {
       tail -n 1000 $LOGFILE &> $SERVDIR/mods_status
       fi
     if cat $SERVDIR/mods_status | grep -q "Mods need update"; then
-      echo -e "Mods need to be updated, performing restart in 10 seconds.\n"
+      echo -e "Mods need to be updated. Performing restart in 10 seconds, press Ctrl+C to abort.\n"
       sleep 10
       func_restart;
     else
-      echo -e "Nothing to do.\n"
+      echo -e "Mods updated. Nothing to do.\n"
     fi
 #
   else
