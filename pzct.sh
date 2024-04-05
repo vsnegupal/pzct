@@ -77,6 +77,36 @@ func_message() {
   echo -e \'servermsg \"$MESSAGE\"\' | xargs $RCON -c $RCONYAML &>/dev/null;
   } # end of func_message
 #
+func_players() {
+  func_pid &>/dev/null;
+  if [ $? -eq 0 ]; then
+#
+    $RCON -c $RCONYAML players
+#
+  else
+    echo "$PID";
+  fi
+  } # end of func_players
+#
+func_thunder() {
+  func_pid &>/dev/null;
+  if [ $? -eq 0 ]; then
+#
+    list_players=$(func_players)
+    mapfile -t array < <(echo "$list_players" | tail -n +2 | sed 's/^.*-//')
+    #echo ${array[@]}
+    if [[ ${#array[@]} -gt 0 ]]; then
+      #echo ${#array[@]}
+      random_index=$(( $RANDOM % ${#array[@]} ))
+      random_element=${array[$random_index]}
+      $RCON -c $RCONYAML "thunder $random_element"
+    fi
+#
+  else
+    echo "$PID";
+  fi
+  } # end of func_thunder
+#
 func_quit() {
   #local RCONYAML=
   func_pid &>/dev/null;
@@ -96,6 +126,7 @@ func_quit() {
       #end of arrays
 #
       for i in ${!arr_sec[@]}; do
+        func_thunder;
         func_message ${arr_msg[$i]};
         echo "${arr_not[$i]}" >&2;
         sleep ${arr_sec[$i]};
@@ -209,6 +240,8 @@ func_checkmods() {
   exit 0;
   } # end of func_checkmods
 #
+#
+#
 func_help() {
   echo -e "\
   usage: pzct command [options]
@@ -262,5 +295,7 @@ func_help() {
     -v | version) func_version;;
     -se) func_self-edit;;
     -m | message) func_message $*;;
+    players) func_players; exit 0;;
+    thunder) func_thunder; exit 0;;
     *) echo -e "pzct: You must specify one of the options.\nTry 'pzct usage' or 'pzct help' for more information.";;
   esac
