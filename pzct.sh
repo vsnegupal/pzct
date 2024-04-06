@@ -206,39 +206,41 @@ func_restart() { func_quit "quit" && func_backup && func_start; }
 
 #######
 #
-func_checkmods() {
+func_modsupdatestatus() {
   func_pid &>/dev/null;
   if [ $? -eq 0 ]; then
-    if [[ ! -e $SERVDIR/mods_status ]]; then
-      touch $SERVDIR/mods_status
-    else
-      cat /dev/null > $SERVDIR/mods_status
-    fi
     MODSNEEDUPDATE=0
     $RCON -c $RCONYAML checkModsNeedUpdate &>/dev/null
+    tail -n 0 -f "$ZDIR/server-console.txt" | while read LINE
+      do
+        echo $LINE
+        case "$LINE" in 
+          *"Mods need update"*)
+            MODSNEEDUPDATE=1
+            break
+            ;;
+          *"Mods updated"*)
+            echo -e "\nNothing to do.\n"
+            break
+            ;;
+        esac
+      done
+    if [[ "$MODSNEEDUPDATE" == "1"  ]]; then
+      echo -e "Mods need to be updated. Performing restart in 10 seconds, press Ctrl+C to abort.\n"
+      sleep 10
+      func_restart;
+    fi
+  else
+    echo "$PID";
   fi
-  } # end of func_checkmods
+    exit 0;
+  } # end of func_modsupdatestatus
 #
-# obsolete code below
-#      if which strace &> /dev/null; then
-#        timeout 10s strace -p $PID -e write -s 200 &> $SERVDIR/mods_status
-#      else
-#      sleep 10
-#      tail -n 1000 $ZDIR/server-console.txt &> $SERVDIR/mods_status
-#      fi
-#    if cat $SERVDIR/mods_status | grep -q "Mods need update"; then
-#      echo -e "Mods need to be updated. Performing restart in 10 seconds, press Ctrl+C to abort.\n"
-#      sleep 10
-#      func_restart;
-#    else
-#      echo -e "Mods updated. Nothing to do.\n"
-#    fi
-#  else
-#    echo "$PID";
-#  fi
-#    exit 0;
-#
-#
+#######
+
+func_checkmods() { ( func_modsupdatestatus ) & FUNCPID=$! ; ( sleep 10 && kill -9 $FUNCPID ) 2>/dev/null & wait $FUNCPID 2>/dev/null; }
+
+#######
 #
 func_help() {
   echo -e "\
