@@ -40,8 +40,8 @@ source "$MY_PATH"/pzct.conf
 func_self-edit() { mcedit ${BASH_SOURCE[0]}; exit 0; }
 func_version() { echo -e "pzct, Project Zomboid Command Tool.  Version 1.1, 19-04-2024.\n\n  This program is freeware for personal use only.\n\n  Special thanks to:\n  joljaycups from Discord for help with func_message"; exit 0; }
 func_usage() { echo "Usage: pzct start | quit | backup | checkmods | restart | log | help will show you the full list"; exit 0; }
-func_server-console_backup() { cp -v "$ZDIR/server-console.txt" $BAKDIR/server-console_$(date +%F-%H:%M).txt; }
-func_log() { rm -f $PIDFILE; local DEFAULT=25; tail --lines ${1-$DEFAULT} -f "$ZDIR/server-console.txt"; }	#usable but rework is needed
+func_server-console_backup() { cp -v "$Zomboid_DIR/server-console.txt" $pzbackup_DIR/server-console_$(date +%F-%H:%M).txt; }
+func_log() { rm -f $PIDFILE; local DEFAULT=25; tail --lines ${1-$DEFAULT} -f "$Zomboid_DIR/server-console.txt"; }	#usable but rework is needed
 #
 func_pid() {
   PID=$(pgrep --full "ProjectZomboid64")
@@ -104,7 +104,6 @@ func_thunder() { # I love thunder sounds, and I will make everyone love it.
   } # end of func_thunder
 #
 func_quit() {
-  #local RCONYAML=
   func_pid &>/dev/null;
   if [ $? -eq 0 ]; then
     if [[ "$#" -eq 1 || "$2" == "" ]]; then
@@ -164,9 +163,9 @@ func_backup() {
   else
     func_server-console_backup;
     func_backup_dirs "" "" &>/dev/null;
-    func_backup_dirs "$ZDIR"/Logs "$BAKDIR"/Logs_"$(date +%F-%H:%M)".tar."$EXTENSION"
-    rm -vrf "$ZDIR"/Logs/*
-    func_backup_dirs "$ZDIR" "$BAKDIR"/Zomboid_backup_"$(date +%F-%H:%M)".tar."$EXTENSION"
+    func_backup_dirs "$Zomboid_DIR"/Logs "$pzbackup_DIR"/Logs_"$(date +%F-%H:%M)".tar."$EXTENSION"
+    rm -vrf "$Zomboid_DIR"/Logs/*
+    func_backup_dirs "$Zomboid_DIR" "$pzbackup_DIR"/Zomboid_backup_"$(date +%F-%H:%M)".tar."$EXTENSION"
     echo -e "The backup was done...\n"
   fi
   } # end of func_backup
@@ -179,11 +178,11 @@ func_start() {
   else
     if [[ $FILES == "1" ]]; then
       echo -e "FILES = $FILES"
-      cp -v $BAKDIR/ProjectZomboid64.json $SERVDIR
-      cp -v -t $ZDIR/Server $BAKDIR/servertest_SandboxVars.lua $BAKDIR/servertest.ini
+      cp -v $pzbackup_DIR/ProjectZomboid64.json $pzserver_DIR
+      cp -v -t $Zomboid_DIR/Server $pzbackup_DIR/servertest_SandboxVars.lua $pzbackup_DIR/servertest.ini
     fi
     echo -e "Starting the server...\n"
-    nohup $SERVDIR/start-server.sh &>/dev/null &
+    nohup $pzserver_DIR/start-server.sh &>/dev/null &
   fi
   } # end of func_start
 #
@@ -192,10 +191,9 @@ func_serverupdate() {
   if [ $? -eq 0 ]; then
     echo "$MSG_IF_RUNNING"
   else
-    #local CMDDIR=
-    cp -v $SERVDIR/ProjectZomboid64.json $BAKDIR
-    $CMDDIR/steamcmd.sh +force_install_dir $SERVDIR +login anonymous +app_update 380870 validate +quit &&
-    cp -v $BAKDIR/ProjectZomboid64.json $SERVDIR
+    cp -v $pzserver_DIR/ProjectZomboid64.json $pzbackup_DIR
+    $steamcmd_DIR/steamcmd.sh +force_install_dir $pzserver_DIR +login anonymous +app_update 380870 validate +quit &&
+    cp -v $pzbackup_DIR/ProjectZomboid64.json $pzserver_DIR
   fi
   exit 0;
   } # end of func_serverupdate
@@ -211,7 +209,7 @@ func_checkmods() {
   if [ $? -eq 0 ]; then
     MODSNEEDUPDATE=0
     $RCON -c $RCONYAML checkModsNeedUpdate &>/dev/null
-    tail -n 0 -f "$ZDIR/server-console.txt" | while read LINE
+    tail -n 0 -f "$Zomboid_DIR/server-console.txt" | while read LINE
       do
         echo $LINE
         case "$LINE" in
