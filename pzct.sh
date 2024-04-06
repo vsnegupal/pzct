@@ -227,12 +227,12 @@ func_checkmods() {
 #      echo -e "Mods need to be updated. Performing restart in 10 seconds, press Ctrl+C to abort.\n"
 #      sleep 10
 #      func_restart;
-    else
-      echo -e "Mods updated. Nothing to do.\n"
-    fi
-  else
-    echo "$PID";
-  fi
+#    else
+#      echo -e "Mods updated. Nothing to do.\n"
+#    fi
+#  else
+#    echo "$PID";
+#  fi
   exit 0;
   } # end of func_checkmods
 #
