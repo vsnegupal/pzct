@@ -214,12 +214,12 @@ func_modsupdatestatus() {
     tail -n 0 -f "$ZDIR/server-console.txt" | while read LINE
       do
         echo $LINE
-        case "$LINE" in 
-          *"Mods need update"*)
+        case "$LINE" in
+          *"CheckModsNeedUpdate: Mods need update"*)
             MODSNEEDUPDATE=1
             break
             ;;
-          *"Mods updated"*)
+          *"CheckModsNeedUpdate: Mods updated"*)
             echo -e "\nNothing to do.\n"
             break
             ;;
