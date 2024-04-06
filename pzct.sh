@@ -113,11 +113,11 @@ func_quit() {
   if [ $? -eq 0 ]; then
     if [[ "$#" -eq 1 || "$2" == "" ]]; then
       #arrays
-        arr_sec=(110 10)
+        arr_sec=(120 10)
         arr_msg=(
 ### INGAME NOTIFICATIONS BELOW
-          "The server will be restarted in 2 minutes. Take a safe position."
-          "The server will restart in 10 seconds. Connect again in 5 minutes."
+          "Server restarts in ${arr_sec[0]} seconds. Take a safe position."
+          "Server restarts in ${arr_sec[1]} seconds. Reconnect in 3 minutes."
         )
         arr_not=(
           "The first notification was sent."
