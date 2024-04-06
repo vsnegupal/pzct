@@ -206,7 +206,7 @@ func_restart() { func_quit "quit" && func_backup && func_start; }
 
 #######
 #
-func_modsupdatestatus() {
+func_checkmods() {
   func_pid &>/dev/null;
   if [ $? -eq 0 ]; then
     MODSNEEDUPDATE=0
@@ -220,27 +220,27 @@ func_modsupdatestatus() {
             break
             ;;
           *"CheckModsNeedUpdate: Mods updated"*)
-            echo -e "\nNothing to do.\n"
+            echo -e "Nothing to do.\n"
             break
             ;;
         esac
       done
     if [[ "$MODSNEEDUPDATE" == "1"  ]]; then
       echo -e "Mods need to be updated. Performing restart in 10 seconds, press Ctrl+C to abort.\n"
-      sleep 10
+      i=0
+      while [[ i -lt 10 ]]; do
+        ((i++))
+        echo -n "."
+        sleep 1
+      done
+      echo -e "\n"
       func_restart;
     fi
   else
     echo "$PID";
   fi
-    exit 0;
-  } # end of func_modsupdatestatus
-#
-#######
-
-func_checkmods() { ( func_modsupdatestatus ) & FUNCPID=$! ; ( sleep 10 && kill -9 $FUNCPID ) 2>/dev/null & wait $FUNCPID 2>/dev/null; }
-
-#######
+  exit 0;
+  } # end of func_checkmods
 #
 func_help() {
   echo -e "\
