@@ -12,13 +12,14 @@
 # 2022-2024, by Roman Fuks, Novosibirsk, Russia
 ###
 #
-MY_PATH="$(dirname -- "${BASH_SOURCE[0]}")"    # relative
-MY_PATH="$(cd -- "$MY_PATH" && pwd)"    # absolutized and normalized
+MY_PATH="$(dirname -- "${BASH_SOURCE[0]}")"	# relative
+MY_PATH="$(cd -- "$MY_PATH" && pwd)"		# absolutized and normalized
 if [[ -z "$MY_PATH" ]] ; then
-  # error; for some reason, the path is not accessible
-  # to the script (e.g. permissions re-evaled after suid)
-  exit 1    # fail
+# error; for some reason, the path is not accessible
+# to the script (e.g. permissions re-evaled after suid)
+  exit 1	# fail
 fi
+#
 echo -e "$MY_PATH/pzct.sh will use $MY_PATH/pzct.conf"
 #
 PIDFILE="$MY_PATH"/pzct.pid
@@ -40,7 +41,7 @@ func_self-edit() { mcedit ${BASH_SOURCE[0]}; exit 0; }
 func_version() { echo -e "pzct, Project Zomboid Command Tool.  Version 1.0, 19-04-2024.\n\n  This program is freeware for personal use only.\n\n  Special thanks to:\n  joljaycups from Discord for help with func_message"; exit 0; }
 func_usage() { echo "Usage: pzct start | quit | backup | checkmods | restart | log | help will show you the full list"; exit 0; }
 func_server-console_backup() { cp -v "$LOGFILE" $BAKDIR/server-console_$(date +%F-%H:%M).txt; }
-func_log() { rm -f $PIDFILE; local DEFAULT=25; tail --lines ${1-$DEFAULT} -f "$LOGFILE"; } #usable but rework is needed
+func_log() { rm -f $PIDFILE; local DEFAULT=25; tail --lines ${1-$DEFAULT} -f "$LOGFILE"; }	#usable but rework is needed
 #
 func_pid() {
   PID=$(pgrep --full "ProjectZomboid64")
@@ -61,7 +62,7 @@ func_kill() {
       sleep 1
       timer=$(( $timer + 1 ));
     done
-    NTFCTN="Process with PID "$PID" killed successfully in $timer seconds." #this command was added just for clarity
+    NTFCTN="Process with PID "$PID" killed successfully in $timer seconds."	#this command was added just for clarity
     func_server-console_backup;
   fi
   echo "$NTFCTN"
@@ -69,20 +70,17 @@ func_kill() {
   } # end of func_kill
 #
 func_message() {
-  #local RCONYAML=
   if [ $1 == "-m" ]; then
     shift;
   fi
   local MESSAGE="$*"
-  echo -e \'servermsg \"$MESSAGE\"\' | xargs $RCON -c $RCONYAML &>/dev/null;
+  echo -e \'servermsg \"$MESSAGE\"\' | xargs $RCON -c $RCONYAML &>/dev/null;	#Thanks again joljaycups
   } # end of func_message
 #
 func_players() {
   func_pid &>/dev/null;
   if [ $? -eq 0 ]; then
-#
     $RCON -c $RCONYAML players
-#
   else
     echo "$PID";
   fi
@@ -91,17 +89,15 @@ func_players() {
 func_thunder() { # I love thunder sounds, and I will make everyone love it.
   func_pid &>/dev/null;
   if [ $? -eq 0 ]; then
-#
     list_players=$(func_players)
     mapfile -t array < <(echo "$list_players" | tail -n +2 | sed 's/^.*-//')
-    #echo ${array[@]}                              # Actually, when you run "thunder username",
-    if [[ ${#array[@]} -gt 0 ]]; then              # it doesn't sound only for the player
-      #echo ${#array[@]}                           # with the specified username, but for everyone.
-      random_index=$(( $RANDOM % ${#array[@]} ))   # However, there is no "all" option for rcon-cli,
-      random_element=${array[$random_index]}       # and you have to specify an username.
-      $RCON -c $RCONYAML "thunder $random_element" # Therefore, we pick a random one.
-    fi
-#
+    #echo ${array[@]}					# Actually, when you run "thunder username",
+    if [[ ${#array[@]} -gt 0 ]]; then			# it doesn't sound only for the player
+      #echo ${#array[@]}				# with the specified username, but for everyone.
+      random_index=$(( $RANDOM % ${#array[@]} ))	# However, there is no "all" option for rcon-cli,
+      random_element=${array[$random_index]}		# and you have to specify an username.
+      $RCON -c $RCONYAML "thunder $random_element"	# Therefore, we pick a random one.
+    fi							# It may not work sometimes, but mostly it works.
   else
     echo "$PID";
   fi
@@ -113,7 +109,7 @@ func_quit() {
   if [ $? -eq 0 ]; then
     if [[ "$#" -eq 1 || "$2" == "" ]]; then
       #arrays
-        arr_sec=(120 10)
+        arr_sec=(120 10) # if needed, change the values.
         arr_msg=(
 ### INGAME NOTIFICATIONS BELOW
           "Server restarts in ${arr_sec[0]} seconds. Take a safe position."
@@ -213,7 +209,6 @@ func_restart() { func_quit "quit" && func_backup && func_start; }
 func_checkmods() {
   func_pid &>/dev/null;
   if [ $? -eq 0 ]; then
-#
     if [[ ! -e $SERVDIR/mods_status ]]; then
       touch $SERVDIR/mods_status
     else
@@ -233,7 +228,6 @@ func_checkmods() {
     else
       echo -e "Mods updated. Nothing to do.\n"
     fi
-#
   else
     echo "$PID";
   fi
