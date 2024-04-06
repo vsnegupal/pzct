@@ -246,59 +246,59 @@ func_help() {
 
   Commands:
 
-  start                   run the start-server.sh script in the background
+  -b, backup			perform a backup
 
-  -q, quit                send a quit command to the server using rcon
-                            with chat notifications and a two-minute delay (can be modified)
+  -chm, checkmods		check if mods need update or not
 
-  -q --now, quit --now    the same command will be sent immediately without notifications
+  -h, help			show this message
 
-  restart                 sequentially execute quit, backup and start, done mostly for cron
+  -k, kill			immediately terminate the server process (without using rcon)
 
-  -m text, message text   displays a message \"text\" in chat and in the middle of the screen
+  -l N, log N			display the last N lines of server-console.txt and then monitors the file (25 lines by default)
 
-  checkmods               check if mods need update or not
+  -m text, message text		displays a message \"text\" in chat and in the middle of the screen
 
-  kill                    immediately terminate the server process (without using rcon)
+  -p, players			list all connected players
 
-  backup                  perform a backup
+  -pid				just show PID of the server process (if it's running)
 
-  -l N, log N             display the last N lines of server-console.txt and then monitors the file (25 lines by default)
+  -q, quit			send a quit command to the server using rcon
+				with chat notifications and 120 seconds delay (can be modified)
 
-  serverupdate            update the server application with steamcmd.sh
+  -q --now, quit --now		the same command will be sent immediately without notifications
 
-  players                 list all connected players
+  -r, restart			sequentially execute quit, backup and start, done mostly for cron
 
-  thunder                 thunder sounds for everyone
+  -s, start			run the start-server.sh script in the background
 
-  -p, pid                 just show PID of the server process (if it's running)
+  -serverupdate			update the server application with steamcmd.sh
 
-  -u, usage               show a brief help on how to use this utility
+  -t, thunder			thunder sounds for everyone
 
-  -v, version             show the program version and its brief description
+  -u, usage			show a brief help on how to use this utility
 
-  -h, help                show this message\n";
+  -v, version			show the program version and its brief description\n";
   exit 0;
   } # end of func_help
 #
 ### menu section
 #
   case $1 in
-    start) func_start; exit 0;;
-    -q | quit) func_quit $@; exit 0;;
-    backup) func_backup; exit 0;;
-    restart) func_restart; exit 0;;
-    checkmods) func_checkmods;;
-    -l | log) func_log $2;;
-    -p | pid) func_pid;;
-    kill) func_kill;;
-    serverupdate) func_serverupdate;;
-    -u | usage) func_usage;;
+    -b | backup) func_backup; exit 0;;
+    -chm | checkmods) func_checkmods;;
     -h | help) func_help;;
-    -v | version) func_version;;
-    -se) func_self-edit;;
+    -k | kill) func_kill;;
+    -l | log) func_log $2;;
     -m | message) func_message $*;;
-    players) func_players; exit 0;;
-    thunder) func_thunder; exit 0;;
+    -p | players) func_players; exit 0;;
+    -pid) func_pid;;
+    -q | quit) func_quit $@; exit 0;;
+    -r | restart) func_restart; exit 0;;
+    -s | start) func_start; exit 0;;
+    -se) func_self-edit;;
+    -serverupdate) func_serverupdate;;
+    -t | thunder) func_thunder; exit 0;;
+    -u | usage) func_usage;;
+    -v | version) func_version;;
     *) echo -e "pzct: You must specify one of the options.\nTry 'pzct usage' or 'pzct help' for more information.";;
   esac
