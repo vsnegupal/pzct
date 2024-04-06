@@ -40,8 +40,8 @@ source "$MY_PATH"/pzct.conf
 func_self-edit() { mcedit ${BASH_SOURCE[0]}; exit 0; }
 func_version() { echo -e "pzct, Project Zomboid Command Tool.  Version 1.0, 19-04-2024.\n\n  This program is freeware for personal use only.\n\n  Special thanks to:\n  joljaycups from Discord for help with func_message"; exit 0; }
 func_usage() { echo "Usage: pzct start | quit | backup | checkmods | restart | log | help will show you the full list"; exit 0; }
-func_server-console_backup() { cp -v "$LOGFILE" $BAKDIR/server-console_$(date +%F-%H:%M).txt; }
-func_log() { rm -f $PIDFILE; local DEFAULT=25; tail --lines ${1-$DEFAULT} -f "$LOGFILE"; }	#usable but rework is needed
+func_server-console_backup() { cp -v "$ZDIR/server-console.txt" $BAKDIR/server-console_$(date +%F-%H:%M).txt; }
+func_log() { rm -f $PIDFILE; local DEFAULT=25; tail --lines ${1-$DEFAULT} -f "$ZDIR/server-console.txt"; }	#usable but rework is needed
 #
 func_pid() {
   PID=$(pgrep --full "ProjectZomboid64")
@@ -214,17 +214,19 @@ func_checkmods() {
     else
       cat /dev/null > $SERVDIR/mods_status
     fi
+    MODSNEEDUPDATE=0
     $RCON -c $RCONYAML checkModsNeedUpdate &>/dev/null
-      if which strace &> /dev/null; then
-        timeout 10s strace -p $PID -e write -s 200 &> $SERVDIR/mods_status
-      else
-      sleep 10
-      tail -n 1000 $LOGFILE &> $SERVDIR/mods_status
-      fi
-    if cat $SERVDIR/mods_status | grep -q "Mods need update"; then
-      echo -e "Mods need to be updated. Performing restart in 10 seconds, press Ctrl+C to abort.\n"
-      sleep 10
-      func_restart;
+    
+#      if which strace &> /dev/null; then
+#        timeout 10s strace -p $PID -e write -s 200 &> $SERVDIR/mods_status
+#      else
+#      sleep 10
+#      tail -n 1000 $ZDIR/server-console.txt &> $SERVDIR/mods_status
+#      fi
+#    if cat $SERVDIR/mods_status | grep -q "Mods need update"; then
+#      echo -e "Mods need to be updated. Performing restart in 10 seconds, press Ctrl+C to abort.\n"
+#      sleep 10
+#      func_restart;
     else
       echo -e "Mods updated. Nothing to do.\n"
     fi
