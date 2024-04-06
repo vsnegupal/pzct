@@ -216,7 +216,10 @@ func_checkmods() {
     fi
     MODSNEEDUPDATE=0
     $RCON -c $RCONYAML checkModsNeedUpdate &>/dev/null
-    
+  fi
+  } # end of func_checkmods
+#
+# obsolete code below
 #      if which strace &> /dev/null; then
 #        timeout 10s strace -p $PID -e write -s 200 &> $SERVDIR/mods_status
 #      else
@@ -233,8 +236,7 @@ func_checkmods() {
 #  else
 #    echo "$PID";
 #  fi
-  exit 0;
-  } # end of func_checkmods
+#    exit 0;
 #
 #
 #
