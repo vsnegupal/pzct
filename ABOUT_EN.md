@@ -11,5 +11,5 @@
 <p>If you would like to suggest a fix or your own variation in the implementation of a point, feel free to do so. I'd be happy to team up with other enthusiasts, and together we'll give this utility a finished look and then present it to The Indie Stone.</p>
 <p>This project is an educational project for me. There are probably points in it that experienced people will find sub-optimal or incorrect. Although I have reached the minimum I had hoped for, I will continue to fix and improve the pzct utility in the future.</p>
 <p>I had originally intended only for personal use of the script. However, if any of you find it useful, you can use pzct too. I would like to draw your attention to the fact that although I am distributing this script freely and for free, I ask you not to appropriate the results of my work. You are free to edit my script as you wish, but I ask that you do not distribute the script after you have edited it.</p>
-<p>You can contact me on Telegram: https://t.me/vsnegupal or by visiting my Discord server: https://discord.gg/saKgQDutgB</p></p>
+<p>You can contact me on Telegram: https://t.me/vsnegupal or by visiting my Discord server: https://discord.gg/saKgQDutgB</p>
 <p>Thank you for your attention!</p>
