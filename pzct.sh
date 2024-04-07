@@ -37,7 +37,6 @@ IFS=$'\n\t'
 source "$MY_PATH"/pzct.conf
 #
 # simple menu entries and functionalities
-func_self-edit() { mcedit ${BASH_SOURCE[0]}; exit 0; }
 func_version() { echo -e "pzct, Project Zomboid Command Tool.  Version 1.1, 19-04-2024.\n\n  This program is freeware for personal use only.\n\n  Special thanks to:\n  joljaycups from Discord for help with func_message"; exit 0; }
 func_usage() { echo "Usage: pzct start | quit | backup | checkmods | restart | log | help will show you the full list"; exit 0; }
 func_server-console_backup() { cp -v "$Zomboid_DIR/server-console.txt" $pzbackup_DIR/server-console_$(date +%F-%H:%M).txt; }
@@ -295,7 +294,6 @@ func_help() {
     -q | quit) func_quit $@; exit 0;;
     -r | restart) func_restart; exit 0;;
     -s | start) func_start; exit 0;;
-    -se) func_self-edit;;
     -serverupdate) func_serverupdate;;
     -t | thunder) func_thunder; exit 0;;
     -u | usage) func_usage;;
