@@ -15,7 +15,7 @@
 MY_PATH="$(dirname -- "${BASH_SOURCE[0]}")"	# relative
 MY_PATH="$(cd -- "$MY_PATH" && pwd)"		# absolutized and normalized
 if [[ -z "$MY_PATH" ]] ; then
-  echo -e "Error: directory $MYPATH is inaccessible for some reason."
+  echo -e "Error: directory $MY_PATH is inaccessible for some reason."
 	# error; for some reason, the path is not accessible
 	# to the script (e.g. permissions re-evaled after suid)
   exit 1
@@ -34,7 +34,7 @@ IFS=$'\n\t'
 #set -e
 #
 if [[ ! -e "$MY_PATH"/pzct.conf ]] || [[ ! -r "$MY_PATH"/pzct.conf ]]; then
-  echo -e "Error: file $MYPATH/pzct.conf is inaccessible or non-existent for some reason."
+  echo -e "Error: file $MY_PATH/pzct.conf is inaccessible or non-existent for some reason."
   exit 1
 else
   echo -e "$MY_PATH/pzct.sh will use $MY_PATH/pzct.conf"
@@ -98,7 +98,7 @@ func_thunder() { # I love thunder sounds, and I will make everyone love it.
     #echo ${array[@]}					# Actually, when you run "thunder username",
     if [[ ${#array[@]} -gt 0 ]]; then			# it doesn't sound only for the player
       #echo ${#array[@]}				# with the specified username, but for everyone.
-      random_index=$(( $RANDOM % ${#array[@]} ))	# However, there is no "all" option for rcon-cli,
+      random_index=$(( $RANDOM % ${#array[@]} ))	# However, there is no "all" option for RCON ,
       random_element=${array[$random_index]}		# and you have to specify an username.
       $RCON -c $RCONYAML "thunder $random_element"	# Therefore, we pick a random one.
     fi							# It may not work sometimes, but mostly it works.
