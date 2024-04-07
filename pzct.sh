@@ -15,12 +15,11 @@
 MY_PATH="$(dirname -- "${BASH_SOURCE[0]}")"	# relative
 MY_PATH="$(cd -- "$MY_PATH" && pwd)"		# absolutized and normalized
 if [[ -z "$MY_PATH" ]] ; then
-# error; for some reason, the path is not accessible
-# to the script (e.g. permissions re-evaled after suid)
-  exit 1	# fail
+  echo -e "Error: directory $MYPATH is inaccessible for some reason."
+	# error; for some reason, the path is not accessible
+	# to the script (e.g. permissions re-evaled after suid)
+  exit 1
 fi
-#
-echo -e "$MY_PATH/pzct.sh will use $MY_PATH/pzct.conf"
 #
 PIDFILE="$MY_PATH"/pzct.pid
 [ -f $PIDFILE ] && { echo "Seems pzct is already running with PID $(cat $PIDFILE)"; exit 0; }
@@ -34,7 +33,13 @@ IFS=$'\n\t'
 #set -x
 #set -e
 #
-source "$MY_PATH"/pzct.conf
+if [[ ! -e "$MY_PATH"/pzct.conf ]] || [[ ! -r "$MY_PATH"/pzct.conf ]]; then
+  echo -e "Error: file $MYPATH/pzct.conf is inaccessible or non-existent for some reason."
+  exit 1
+else
+  echo -e "$MY_PATH/pzct.sh will use $MY_PATH/pzct.conf"
+  source "$MY_PATH"/pzct.conf
+fi
 #
 # simple menu entries and functionalities
 func_version() { echo -e "pzct, Project Zomboid Command Tool.  Version 1.1, 19-04-2024.\n\n  This program is freeware for personal use only.\n\n  Special thanks to:\n  joljaycups from Discord for help with func_message"; exit 0; }
