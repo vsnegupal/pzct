@@ -80,8 +80,8 @@ fi
 # simple menu entries and functionalities
 func_version() { echo -e "pzct, Project Zomboid Command Tool.  Version 1.1, 19-04-2024.\n\n  This program is freeware for personal use only.\n\n  Special thanks to:\n  joljaycups from Discord for help with func_message"; exit 0; }
 func_usage() { echo "Usage: pzct start | quit | backup | checkmods | restart | log | help will show you the full list"; exit 0; }
-func_server-console_backup() { cp -v "$Zomboid_DIR/server-console.txt" "$pzbackup_DIR"/server-console_$(date +%F-%H:%M).txt; }
-func_log() { rm -f $PIDFILE; local DEFAULT=25; tail --lines ${1-$DEFAULT} -f "$Zomboid_DIR/server-console.txt"; }	#usable but rework is needed
+func_server-console_backup() { cp -v "$Zomboid_DIR"/server-console.txt "$pzbackup_DIR"/server-console_$(date +%F-%H:%M).txt; }
+func_log() { rm -f $PIDFILE; local DEFAULT=25; tail --lines ${1-$DEFAULT} -f "$Zomboid_DIR"/server-console.txt; }	#usable but rework is needed
 #
 
 func_pid() {
@@ -249,7 +249,7 @@ func_start() {
     fi
 
     func_checkperms er "$pzserver_DIR" || return
-    func_checkperms ex "$pzserver_DIR/start-server.sh" || return
+    func_checkperms ex "$pzserver_DIR"/start-server.sh || return
 
     echo -e "Starting the server...\n"
     nohup "$pzserver_DIR"/start-server.sh &>/dev/null &
@@ -265,7 +265,7 @@ func_serverupdate() {
     func_checkperms erw "$pzserver_DIR" || return
     func_checkperms erw "$pzbackup_DIR" || return
     func_checkperms er "$steamcmd_DIR" || return
-    func_checkperms ex "$pzserver_DIR/steamcmd.sh" || return
+    func_checkperms ex "$pzserver_DIR"/steamcmd.sh || return
 
     cp -v "$pzserver_DIR"/ProjectZomboid64.json "$pzbackup_DIR"
     "$steamcmd_DIR"/steamcmd.sh +force_install_dir "$pzserver_DIR" +login anonymous +app_update 380870 validate +quit &&
@@ -285,13 +285,13 @@ func_checkmods() {
   func_checkperms ex "$RCON" || return
   func_checkperms er "$RCONYAML" || return
   func_checkperms er "$Zomboid_DIR" || return
-  func_checkperms er "$Zomboid_DIR/server-console.txt" || return
+  func_checkperms er "$Zomboid_DIR"/server-console.txt || return
 
   func_pid &>/dev/null;
   if [ $? -eq 0 ]; then
     MODSNEEDUPDATE=0
     "$RCON" -c "$RCONYAML" checkModsNeedUpdate &>/dev/null
-    tail -n 0 -f "$Zomboid_DIR/server-console.txt" | while read LINE
+    tail -n 0 -f "$Zomboid_DIR"/server-console.txt | while read LINE
       do
         echo $LINE
         case "$LINE" in
@@ -307,7 +307,7 @@ func_checkmods() {
       done
     if [[ "$MODSNEEDUPDATE" == "1"  ]]; then
       echo -e "Mods need to be updated. Performing restart in 10 seconds, press Ctrl+C to abort.\n"
-      i=0
+      chmcount=0
       while [[ chmcount -lt 10 ]]; do
         ((chmcount++))
         echo -n "."
