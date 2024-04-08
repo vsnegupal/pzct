@@ -119,7 +119,7 @@ func_message() {
     shift;
   fi
   local MESSAGE="$*"
-  echo -e \'servermsg \"$MESSAGE\"\' | xargs $RCON -c $RCONYAML &>/dev/null;	#Thanks again joljaycups
+  echo -e \'servermsg \"$MESSAGE\"\' | xargs "$RCON" -c "$RCONYAML" &>/dev/null;	#Thanks again joljaycups
   } # end of func_message
 #
 func_players() {
@@ -150,7 +150,7 @@ func_thunder() { # I love thunder sounds, and I will make everyone love it.
       #echo ${#array[@]}				# with the specified username, but for everyone.
       random_index=$(( $RANDOM % ${#array[@]} ))	# However, there is no "all" option for rcon-cli,
       random_element=${array[$random_index]}		# and you have to specify an username.
-      $RCON -c $RCONYAML "thunder $random_element"	# Therefore, we pick a random one.
+      "$RCON" -c "$RCONYAML" "thunder $random_element"	# Therefore, we pick a random one.
     fi							# It may not work sometimes, but mostly it works.
   else
     echo "$PID";
@@ -191,7 +191,7 @@ func_quit() {
       echo "With --now option, the server will be stopped immediately without any notifications.";
     fi
 #
-    $RCON -c $RCONYAML quit &>/dev/null && echo "'Quit' command has been sent..." >&2
+    "$RCON" -c "$RCONYAML" quit &>/dev/null && echo "'Quit' command has been sent..." >&2
     while $(kill -0 $PID &>/dev/null); do
       sleep 1;
     done;
@@ -290,7 +290,7 @@ func_checkmods() {
   func_pid &>/dev/null;
   if [ $? -eq 0 ]; then
     MODSNEEDUPDATE=0
-    $RCON -c $RCONYAML checkModsNeedUpdate &>/dev/null
+    "$RCON" -c "$RCONYAML" checkModsNeedUpdate &>/dev/null
     tail -n 0 -f "$Zomboid_DIR/server-console.txt" | while read LINE
       do
         echo $LINE
