@@ -70,9 +70,9 @@ func_checkperms() {
   done
   return 0
   } # end of func_checkperms
-#func_checkperms erwx "$DIR" || return
+#func_checkperms erwx "$TARGET" || return
 #
-if func_checkperms er $MY_PATH/pzct.conf; then
+if func_checkperms er "$MY_PATH"/pzct.conf; then
   echo -e "$MY_PATH/pzct.sh will use $MY_PATH/pzct.conf"
   source "$MY_PATH"/pzct.conf
 fi
@@ -80,8 +80,8 @@ fi
 # simple menu entries and functionalities
 func_version() { echo -e "pzct, Project Zomboid Command Tool.  Version 1.1, 19-04-2024.\n\n  This program is freeware for personal use only.\n\n  Special thanks to:\n  joljaycups from Discord for help with func_message"; exit 0; }
 func_usage() { echo "Usage: pzct start | quit | backup | checkmods | restart | log | help will show you the full list"; exit 0; }
-func_server-console_backup() { cp -v "$Zomboid_DIR/server-console.txt" $pzbackup_DIR/server-console_$(date +%F-%H:%M).txt; }
-func_log() { rm -f $PIDFILE; local DEFAULT=25; tail --lines ${1-$DEFAULT} -f "$Zomboid_DIR/server-console.txt"; }	#usable but rework is needed
+func_server-console_backup() { cp -v "$Zomboid_DIR/server-console.txt" "$pzbackup_DIR"/server-console_$(date +%F-%H:%M).txt; }
+func_log() { rm -f $PIDFILE; local DEFAULT=25; tail --lines ${1-$DEFAULT} -f "$Zomboid_DIR"/server-console.txt"; }	#usable but rework is needed
 #
 
 func_pid() {
@@ -103,7 +103,7 @@ func_kill() {
       sleep 1
       timer=$(( $timer + 1 ));
     done
-    NTFCTN="Process with PID "$PID" killed successfully in $timer seconds."	#this command was added just for clarity
+    NTFCTN="Process with PID $PID killed successfully in $timer seconds."	#this command was added just for clarity
     func_server-console_backup;
   fi
   echo "$NTFCTN"
@@ -130,7 +130,7 @@ func_players() {
   func_pid &>/dev/null;
 
   if [ $? -eq 0 ]; then
-    $RCON -c $RCONYAML players
+    "$RCON" -c "$RCONYAML" players
   else
     echo "$PID";
   fi
@@ -244,15 +244,15 @@ func_start() {
       func_checkperms erw "$Zomboid_DIR" || return
       func_checkperms erw "$pzserver_DIR" || return
 
-      cp -v $pzbackup_DIR/ProjectZomboid64.json $pzserver_DIR
-      cp -v -t $Zomboid_DIR/Server $pzbackup_DIR/servertest_SandboxVars.lua $pzbackup_DIR/servertest.ini
+      cp -v "$pzbackup_DIR"/ProjectZomboid64.json "$pzserver_DIR"
+      cp -v -t "$Zomboid_DIR"/Server "$pzbackup_DIR"/servertest_SandboxVars.lua "$pzbackup_DIR"/servertest.ini
     fi
 
     func_checkperms er "$pzserver_DIR" || return
     func_checkperms ex "$pzserver_DIR/start-server.sh" || return
 
     echo -e "Starting the server...\n"
-    nohup $pzserver_DIR/start-server.sh &>/dev/null &
+    nohup "$pzserver_DIR"/start-server.sh &>/dev/null &
   fi
   } # end of func_start
 #
@@ -267,9 +267,9 @@ func_serverupdate() {
     func_checkperms er "$steamcmd_DIR" || return
     func_checkperms ex "$pzserver_DIR/steamcmd.sh" || return
 
-    cp -v $pzserver_DIR/ProjectZomboid64.json $pzbackup_DIR
-    $steamcmd_DIR/steamcmd.sh +force_install_dir $pzserver_DIR +login anonymous +app_update 380870 validate +quit &&
-    cp -v $pzbackup_DIR/ProjectZomboid64.json $pzserver_DIR
+    cp -v "$pzserver_DIR"/ProjectZomboid64.json "$pzbackup_DIR"
+    "$steamcmd_DIR"/steamcmd.sh +force_install_dir "$pzserver_DIR" +login anonymous +app_update 380870 validate +quit &&
+    cp -v "$pzbackup_DIR"/ProjectZomboid64.json "$pzserver_DIR"
   fi
   exit 0;
   } # end of func_serverupdate
@@ -308,8 +308,8 @@ func_checkmods() {
     if [[ "$MODSNEEDUPDATE" == "1"  ]]; then
       echo -e "Mods need to be updated. Performing restart in 10 seconds, press Ctrl+C to abort.\n"
       i=0
-      while [[ i -lt 10 ]]; do
-        ((i++))
+      while [[ chmcount -lt 10 ]]; do
+        ((chmcounti++))
         echo -n "."
         sleep 1
       done
