@@ -80,7 +80,7 @@ fi
 # simple menu entries and functionalities
 func_version() { echo -e "pzct, Project Zomboid Command Tool.  Version 1.1, 19-04-2024.\n\n  This program is freeware for personal use only.\n\n  Special thanks to:\n  joljaycups from Discord for help with func_message"; exit 0; }
 func_usage() { echo "Usage: pzct start | quit | backup | checkmods | restart | log | help will show you the full list"; exit 0; }
-func_server-console_backup() { cp -v "$Zomboid_DIR"/server-console.txt "$pzbackup_DIR"/server-console_$(date +%F-%H:%M).txt; }
+func_server-console_backup() { cp -v "$Zomboid_DIR"/server-console.txt "$pzbackup_DIR"/server-console_"$(date +%F-%H:%M)".txt; }
 func_log() { rm -f $PIDFILE; local DEFAULT=25; tail --lines ${1-$DEFAULT} -f "$Zomboid_DIR"/server-console.txt; }	#usable but rework is needed
 #
 
@@ -254,6 +254,7 @@ func_start() {
     echo -e "Starting the server...\n"
     nohup "$pzserver_DIR"/start-server.sh &>/dev/null &
   fi
+  exit 0;
   } # end of func_start
 #
 func_serverupdate() {
@@ -376,7 +377,7 @@ func_help() {
     -pid) func_pid;;
     -q | quit) func_quit $@; exit 0;;
     -r | restart) func_restart; exit 0;;
-    -s | start) func_start; exit 0;;
+    -s | start) func_start;;
     -serverupdate) func_serverupdate;;
     -t | thunder) func_thunder; exit 0;;
     -u | usage) func_usage;;
