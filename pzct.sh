@@ -34,7 +34,7 @@ IFS=$'\n\t'
 #set -e
 #
 func_checkperms() {
-if [ ! "$1" "$2" ]; then
+if [ ! -"$1" "$2" ]; then
   echo -e "Error: some permission denied for $2\n or it's non-existent. Operation aborted."
   return 1
 else
@@ -93,8 +93,8 @@ func_message() {
   } # end of func_message
 #
 func_players() {
-  #func_checkperms -e-x "$RCON" || return
-  #func_checkperms -e-r "$RCONYAML" || return
+  #func_checkperms ex "$RCON" || return
+  #func_checkperms er "$RCONYAML" || return
   func_pid &>/dev/null;
 
   if [ $? -eq 0 ]; then
