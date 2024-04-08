@@ -34,7 +34,7 @@ IFS=$'\n\t'
 #set -e
 #
 func_checkperms() {
-if [ ! -"$1" "$2" ]; then
+if [ ! "$1" "$2" ]; then
   echo -e "Error: some permission denied for $2\n or it's non-existent. Operation aborted."
   return 1
 else
@@ -82,8 +82,8 @@ func_kill() {
   } # end of func_kill
 #
 func_message() {
-  func_checkperms ex "$RCON" || return
-  func_checkperms er "$RCONYAML" || return
+  #func_checkperms ex "$RCON" || return
+  #func_checkperms er "$RCONYAML" || return
 
   if [ $1 == "-m" ]; then
     shift;
@@ -93,8 +93,8 @@ func_message() {
   } # end of func_message
 #
 func_players() {
-  func_checkperms ex "$RCON" || return
-  func_checkperms er "$RCONYAML" || return
+  #func_checkperms -e-x "$RCON" || return
+  #func_checkperms -e-r "$RCONYAML" || return
   func_pid &>/dev/null;
 
   if [ $? -eq 0 ]; then
@@ -105,8 +105,8 @@ func_players() {
   } # end of func_players
 #
 func_thunder() { # I love thunder sounds, and I will make everyone love it.
-  func_checkperms ex "$RCON" || return
-  func_checkperms er "$RCONYAML" || return
+  #func_checkperms ex "$RCON" || return
+  #func_checkperms er "$RCONYAML" || return
 
   func_pid &>/dev/null;
   if [ $? -eq 0 ]; then
@@ -125,8 +125,8 @@ func_thunder() { # I love thunder sounds, and I will make everyone love it.
   } # end of func_thunder
 #
 func_quit() {
-  func_checkperms ex "$RCON" || return
-  func_checkperms er "$RCONYAML" || return
+  #func_checkperms ex "$RCON" || return
+  #func_checkperms er "$RCONYAML" || return
 
   func_pid &>/dev/null;
   if [ $? -eq 0 ]; then
@@ -181,8 +181,8 @@ func_backup() {
     fi
     } # end of func_backup_dirs
 #
-  func_checkperms er "$Zomboid_DIR" || return
-  func_checkperms erw "$pzbackup_DIR" || return
+  #func_checkperms er "$Zomboid_DIR" || return
+  #func_checkperms erw "$pzbackup_DIR" || return
 
   func_pid &>/dev/null;
   if [ $? -eq 0 ]; then
@@ -205,14 +205,14 @@ func_start() {
   else
     if [[ $FILES == "1" ]]; then
       echo -e "FILES = $FILES"
-      func_checkperms er "$pzbackup_DIR" || return
-      func_checkperms erw "$Zomboid_DIR" || return
-      func_checkperms erw "$pzserver_DIR" || return
+      #func_checkperms er "$pzbackup_DIR" || return
+      #func_checkperms erw "$Zomboid_DIR" || return
+      #func_checkperms erw "$pzserver_DIR" || return
       cp -v $pzbackup_DIR/ProjectZomboid64.json $pzserver_DIR
       cp -v -t $Zomboid_DIR/Server $pzbackup_DIR/servertest_SandboxVars.lua $pzbackup_DIR/servertest.ini
     fi
-    func_checkperms er "$pzserver_DIR" || return
-    func_checkperms ex "$pzserver_DIR/start-server.sh" || return
+    #func_checkperms er "$pzserver_DIR" || return
+    #func_checkperms ex "$pzserver_DIR/start-server.sh" || return
     echo -e "Starting the server...\n"
     nohup $pzserver_DIR/start-server.sh &>/dev/null &
   fi
@@ -223,10 +223,10 @@ func_serverupdate() {
   if [ $? -eq 0 ]; then
     echo "$MSG_IF_RUNNING"
   else
-    func_checkperms erw "$pzserver_DIR" || return
-    func_checkperms erw "$pzbackup_DIR" || return
-    func_checkperms er "$steamcmd_DIR" || return
-    func_checkperms ex "$pzserver_DIR/steamcmd.sh" || return
+    #func_checkperms erw "$pzserver_DIR" || return
+    #func_checkperms erw "$pzbackup_DIR" || return
+    #func_checkperms er "$steamcmd_DIR" || return
+    #func_checkperms ex "$pzserver_DIR/steamcmd.sh" || return
     cp -v $pzserver_DIR/ProjectZomboid64.json $pzbackup_DIR
     $steamcmd_DIR/steamcmd.sh +force_install_dir $pzserver_DIR +login anonymous +app_update 380870 validate +quit &&
     cp -v $pzbackup_DIR/ProjectZomboid64.json $pzserver_DIR
@@ -241,10 +241,10 @@ func_restart() { func_quit "quit" && func_backup && func_start; }
 #######
 #
 func_checkmods() {
-  func_checkperms ex "$RCON" || return
-  func_checkperms er "$RCONYAML" || return
-  func_checkperms er "$Zomboid_DIR" || return
-  func_checkperms er "$Zomboid_DIR/server-console.txt" || return
+  #func_checkperms ex "$RCON" || return
+  #func_checkperms er "$RCONYAML" || return
+  #func_checkperms er "$Zomboid_DIR" || return
+  #func_checkperms er "$Zomboid_DIR/server-console.txt" || return
   func_pid &>/dev/null;
   if [ $? -eq 0 ]; then
     MODSNEEDUPDATE=0
