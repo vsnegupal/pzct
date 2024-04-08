@@ -34,10 +34,10 @@ IFS=$'\n\t'
 #set -e
 #
 func_checkperms() {
-  PERMS=$1
-  TARGET=$2
-  for ((i=0; i<${#PERMS}; i++)); do
-    case "${PERMS:$i:1}" in
+  local PERMS=$1
+  local TARGET=$2
+  for ((chpcount=0; chpcount<${#PERMS}; chpcount++)); do
+    case "${PERMS:$chpcount:1}" in
       e)
         if [ ! -e "$TARGET" ]; then
           echo "Error: $TARGET not exists."
@@ -63,7 +63,7 @@ func_checkperms() {
         fi
         ;;
       *)
-        echo "Error: unknown argument in ${PERMS:$i:1}"
+        echo "Error: unknown argument ${PERMS:$chpcount:1}"
         return 1
         ;;
     esac
@@ -178,11 +178,11 @@ func_quit() {
         )
       #end of arrays
 #
-      for i in ${!arr_sec[@]}; do
+      for qcount in ${!arr_sec[@]}; do
         func_thunder;
-        func_message ${arr_msg[$i]};
-        echo "${arr_not[$i]}" >&2;
-        sleep ${arr_sec[$i]};
+        func_message ${arr_msg[$qcount]};
+        echo "${arr_not[$qcount]}" >&2;
+        sleep ${arr_sec[$qcount]};
       done
 #
     elif [[ "$#" -ge 2 && "$2" != "--now" ]]; then
