@@ -70,12 +70,12 @@ func_checkperms() {
   done
   return 0
   } # end of func_checkperms
+#func_checkperms erwx "$DIR" || return
 #
 if func_checkperms er $MY_PATH/pzct.conf; then
   echo -e "$MY_PATH/pzct.sh will use $MY_PATH/pzct.conf"
   source "$MY_PATH"/pzct.conf
 fi
-#func_checkperms erwx "$DIR" || return
 #
 # simple menu entries and functionalities
 func_version() { echo -e "pzct, Project Zomboid Command Tool.  Version 1.1, 19-04-2024.\n\n  This program is freeware for personal use only.\n\n  Special thanks to:\n  joljaycups from Discord for help with func_message"; exit 0; }
