@@ -309,7 +309,7 @@ func_checkmods() {
       echo -e "Mods need to be updated. Performing restart in 10 seconds, press Ctrl+C to abort.\n"
       i=0
       while [[ chmcount -lt 10 ]]; do
-        ((chmcounti++))
+        ((chmcount++))
         echo -n "."
         sleep 1
       done
