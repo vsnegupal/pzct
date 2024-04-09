@@ -1,4 +1,5 @@
-Всех приветствую! Позвольте представить вам **pzct**, the tiny Project Zomboid Console (or Command) Tool, allows you to run some simple operations managing a dedicated server, and, more importantly, automatically update the mods on the server.
+Всех приветствую!
+Позвольте представить вам **pzct**, что означает Project Zomboid Console (or Command) Tool, которая делает управление сервером Project Zomboid проще, 
 Ниже представлен порядок действий, выполнив которые, вы сможете легко и быстро начать пользоваться **pzct**, не имея опыта в использовании Linux. Если вы не новичок в Linux, то наверняка сами поймете, как интегрировать **pzct** в вашу систему.
 
 ##0. Подготовка##
