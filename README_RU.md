@@ -1,33 +1,33 @@
 Всех приветствую! Позвольте представить вам **pzct**, the tiny Project Zomboid Console (or Command) Tool, allows you to run some simple operations managing a dedicated server, and, more importantly, automatically update the mods on the server.
 Ниже представлен порядок действий, выполнив которые, вы сможете легко и быстро начать пользоваться **pzct**, не имея опыта в использовании Linux. Если вы не новичок в Linux, то наверняка сами поймете, как интегрировать **pzct** в вашу систему.
 
-#0. Подготовка
+##0. Подготовка##
 
 Предполагается, что:
-1. у вас уже установлен steamcmd
-2. что вы уже выполнили команду "/some/path/to/steamcmd/steamcmd.sh +force_install_dir /some/path/to/pzserver +login anonymous +app_update 380870 validate +quit &&" 
-3. и что вы можете запустить сервер Project Zomboid, выполнив скрипт start-server.sh
+1. у вас уже установлен `steamcmd`
+2. что вы уже выполнили команду `/some/path/to/steamcmd/steamcmd.sh +force_install_dir /some/path/to/pzserver +login anonymous +app_update 380870 validate +quit &&`
+3. и что вы можете запустить сервер Project Zomboid, выполнив скрипт `start-server.sh`
 
-Если у вас не установлен steamcmd, то обратитесь к программисту в Интернет для получения инструкций по его установке.
-После установки steamcmd можете попробовать выполнить команду из п.2 и запустить сервер, выполнив скрипт /path/to/pzserver/start-server.sh
+Если у вас НЕ установлен `steamcmd` и так далее, то обратитесь ~~к программисту~~ в Интернет для получения инструкций по его установке.
+После установки `steamcmd` можете попробовать выполнить команду из п.2 и запустить сервер, выполнив скрипт `/path/to/pzserver/start-server.sh`
 
-Также убедитесь, что у вас в системе уже есть программы **wget**, **tar**, **mc**, **crond** и **crontab**. Для этого выполните следующие команды:
->which wget
->which tar
->which mcedit
->which crond
->which crontab
+Также убедитесь, что у вас в системе уже есть программы `wget`, `tar`, `mc`, `crond` и `crontab`. Для этого выполните следующие команды:
+`which wget`
+`which tar`
+`which mcedit`
+`which crond`
+`which crontab`
 
-Если вы видите ответы вроде "/usr/bin/wget", "/usr/bin/tar", "/usr/bin/mcedit", "/usr/sbin/crond", "/usr/bin/crontab" - вы можете продолжить.
-Если ответы отличаются от этих и, вероятно, содержат "no wget", "no tar", "no mcedit" и так далее - вы не можете продолжить.
+Если вы видите ответы вроде `/usr/bin/wget`, `/usr/bin/tar`, `/usr/bin/mcedit`, `/usr/sbin/crond`, `/usr/bin/crontab` - вы можете продолжить.
+Если ответы отличаются от этих и, вероятно, содержат `no wget`, `no tar`, `no mcedit` и так далее - вы не можете продолжить.
 Вам нужно установить отсутствующие программы для вашей системы. Поищите информацию в Интернете о том, как это сделать, или обратитесь в мой сервер Discord.
 
-Дополнительно:
+#Дополнительно:#
 
-Для лучшего понимания, выполните команду >echo $HOME
-Вы увидите строчку навроде "/home/some_name" или "/root" (если вы root). Это путь к домашнему каталогу пользователя, от имени которого вы выполняете все последующие команды.
+Для лучшего понимания, выполните команду `echo $HOME`
+Вы увидите строчку навроде `/home/some_name` или `/root` (если вы *root*). Это путь к домашнему каталогу пользователя, от имени которого вы выполняете все последующие команды.
 
-#1. Создание каталогов
+##1. Создание каталогов##
 
 Создайте каталог pzct в вашем домашнем каталоге и перейдите в него:
 mkdir $HOME/pzct
