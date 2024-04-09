@@ -32,8 +32,8 @@
 `wget https://github.com/gorcon/rcon-cli/releases/download/v0.10.3/rcon-0.10.3-amd64_linux.tar.gz`  
 `wget https://github.com/vsnegupal/pzct/releases/download/v1.1/pzct-1.1-linux.tar.gz`<p>
 Распакуйте архивы:  
-`tar xvz rcon*.tar.gz --strip-components=1`  
-`tar xvz pzct*.tar.gz --strip-components=1`<p>
+`tar xvf rcon*.tar.gz --strip-components=1`  
+`tar xvf pzct*.tar.gz --strip-components=1`<p>
 ### Дополнительно:<p>
 - Можете прочитать _ABOUT_EN.txt_ или _ABOUT_RU.txt_, где я описал причины и процесс разработки `pzct`  
 - Можете удалить файлы ABOUT_EN.txt, ABOUT_RU.txt, CHANGELOG.md, LICENSE, pzct.tar.gz и rcon-0.10.3-amd64_linux.tar.gz:  
