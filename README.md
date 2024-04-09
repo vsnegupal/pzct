@@ -101,7 +101,7 @@ or for example
 `/home/user/pzct/pzct/pzct.sh help`<p>
 # 99. Subscribe to vsnegupie<p>
 You can join my server in Discord:  
-https://discord.gg/UkrFcBPtPJ<p>
+https://discord.gg/QV8x6cM99p<p>
 To see `pzct` in action, join my PZ server:  
 `IP: 5.128.212.85`  
 `PORT: 16261`  
