@@ -78,7 +78,7 @@ if func_checkperms er "$MY_PATH"/pzct.conf; then
 fi
 #
 # simple menu entries and functionalities
-func_version() { echo -e "pzct, Project Zomboid Command Tool.  Version 1.1, 19-04-2024.\n\n  This program is freeware for personal use only.\n\n  Special thanks to:\n  joljaycups from Discord for help with func_message"; exit 0; }
+func_version() { echo -e "pzct, Project Zomboid Command Tool.  Version 1.1, 19-04-2024.\n\n  This program is freeware for personal use only.\n\n  Special thanks to:\n   my friends Rostislav and Vadim\n   joljaycups from Discord for help with func_message\n   to the people who haven't left my "The Camp" server in two years"; exit 0; }
 func_usage() { echo "Usage: pzct start | quit | backup | checkmods | restart | log | help will show you the full list"; exit 0; }
 func_server-console_backup() { cp -v "$Zomboid_DIR"/server-console.txt "$pzbackup_DIR"/server-console_"$(date +%F-%H:%M)".txt; }
 func_log() { rm -f $PIDFILE; local DEFAULT=25; tail --lines ${1-$DEFAULT} -f "$Zomboid_DIR"/server-console.txt; }	#usable but rework is needed
@@ -329,38 +329,38 @@ func_help() {
 
   Commands:
 
-  -b, backup			perform a backup
+  -b or backup			perform a backup
 
-  -chm, checkmods		check if mods need update or not
+  -chm or checkmods		check if mods need update or not
 
-  -h, help			show this message
+  -h or help			show this message
 
-  -k, kill			immediately terminate the server process (without using rcon)
+  -k or kill			immediately terminate the server process (without using rcon)
 
-  -l N, log N			display the last N lines of server-console.txt and then monitors the file (25 lines by default)
+  -l N or log N			display the last N lines of server-console.txt and then monitors the file (25 lines by default)
 
-  -m text, message text		displays a message \"text\" in chat and in the middle of the screen
+  -m text or message text		displays a message \"text\" in chat and in the middle of the screen
 
-  -p, players			list all connected players
+  -p or players			list all connected players
 
   -pid				just show PID of the server process (if it's running)
 
-  -q, quit			send a quit command to the server using rcon
+  -q or quit			send a quit command to the server using rcon
 				with chat notifications and 120 seconds delay (can be modified)
 
-  -q --now, quit --now		the same command will be sent immediately without notifications
+  -q --now or quit --now		the same command will be sent immediately without notifications
 
-  -r, restart			sequentially execute quit, backup and start, done mostly for cron
+  -r or restart			sequentially execute quit, backup and start, done mostly for cron
 
-  -s, start			run the start-server.sh script in the background
+  -s or start			run the start-server.sh script in the background
 
   -serverupdate			update the server application with steamcmd.sh
 
-  -t, thunder			thunder sounds for everyone
+  -t or thunder			thunder sounds for everyone
 
-  -u, usage			show a brief help on how to use this utility
+  -u or usage			show a brief help on how to use this utility
 
-  -v, version			show the program version and its brief description\n";
+  -v or version			show the program version and its brief description\n";
   exit 0;
   } # end of func_help
 #
