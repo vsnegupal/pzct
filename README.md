@@ -32,8 +32,8 @@ Download `rcon` and `pzct`:
 `wget https://github.com/gorcon/rcon-cli/releases/download/v0.10.3/rcon-0.10.3-amd64_linux.tar.gz`  
 `wget https://github.com/vsnegupal/pzct/releases/download/v1.1/pzct-1.1-linux.tar.gz`<p>
 Extract the archives:  
-`tar xvz rcon*.tar.gz --strip-components=1`  
-`tar xvz pzct*.tar.gz --strip-components=1`<p>
+`tar xvf rcon*.tar.gz --strip-components=1`  
+`tar xvf pzct*.tar.gz --strip-components=1`<p>
 ### Optional:<p>
 - You can read _ABOUT_EN.txt_ or _ABOUT_RU.txt_ where I described the reasons and process for developing `pzct`  
 - You can delete the files ABOUT_EN.txt, ABOUT_RU.txt, CHANGELOG.md, LICENSE, pzct.tar.gz and rcon-0.10.3-amd64_linux.tar.gz:  
