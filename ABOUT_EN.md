@@ -14,6 +14,6 @@ Hi everyone!
 <p>This project is an educational project for me. There are probably points in it that experienced people will find sub-optimal or incorrect. Although I have reached the minimum I had hoped for, I will continue to fix and improve the pzct utility in the future.
 <p>I had originally intended only for personal use of the script. However, if any of you find it useful, you can use pzct too. I used only basic Unix commands and utilities in the script, so it should work the same in many popular Linux distributions. if it doesn't - let me know. The development is done in AlmaLinux 8.8.
 <p>I would like to draw your attention to the fact that although I am distributing this script freely and for free, I ask you not to appropriate the results of my work. You are free to edit my script as you wish, but I ask that you do not distribute the script after you have edited it.
-<p>You can contact me by visiting my Discord server: https://discord.gg/saKgQDutgB
+<p>You can contact me by visiting my Discord server: https://discord.gg/Gxstk238gM
 <p>You can visit https://www.buymeacoffee.com/vsnegupal if you want to support me a little.
 <p>Thank you for your attention!
