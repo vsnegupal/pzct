@@ -94,19 +94,16 @@ func_pid() {
   } # end of func_pid
 #
 func_kill() {
+  rm -f $PIDFILE
   func_pid &>/dev/null;
-  local NTFCTN="$PID"
-  if [ $RETCODE -eq 0 ]; then
-    timer=0
-    kill -9 $PID
+  ktimer=0
+  kill -9 $PID
     while $(kill -0 $PID &>/dev/null); do
       sleep 1
-      timer=$(( $timer + 1 ));
+      ktimer=$(( $ktimer + 1 ));
     done
-    NTFCTN="Process with PID $PID killed successfully in $timer seconds."	#this command was added just for clarity
-    func_server-console_backup;
-  fi
-  echo "$NTFCTN"
+  echo "Process with PID $PID killed successfully in $ktimer seconds."	#this command was added just for clarity
+  func_server-console_backup;
   exit 0;
   } # end of func_kill
 #
@@ -254,6 +251,11 @@ func_start() {
 
     echo -e "Starting the server...\n"
     nohup "$pzserver_DIR"/start-server.sh &>/dev/null &
+    if [ $? -eq 0 ]; then
+      return 0
+    else
+      return 1
+    fi
   fi
   } # end of func_start
 #
