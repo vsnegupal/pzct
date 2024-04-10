@@ -24,7 +24,7 @@ fi
 PIDFILE="$MY_PATH"/pzct.pid
 [ -f $PIDFILE ] && { echo "Seems pzct is already running with PID $(cat $PIDFILE)"; exit 0; }
 echo $$ > $PIDFILE
-trap "rm -f $PIDFILE" EXIT 2 3 15 SIGTSTP
+trap "rm -f $PIDFILE; exit 0;" EXIT 2 3 15 SIGTSTP
 #
 IFS=$'\n\t'
 #
@@ -173,8 +173,8 @@ func_quit() {
           "Server restarts in ${arr_sec[1]} seconds. Reconnect in 3 minutes."
         )
         arr_not=(
-          "The first notification was sent."
-          "The second notification was sent."
+          "The first notification was sent. Performing quit in ${arr_sec[0]} seconds, press Ctrl+C to abort."
+          "The second notification was sent. Performing quit in ${arr_sec[0]} seconds, press Ctrl+C to abort."
         )
       #end of arrays
 #
@@ -314,7 +314,6 @@ func_checkmods() {
         echo -n "."
         sleep 1
       done
-      #echo -e "\n"
       func_restart;
     fi
   else
