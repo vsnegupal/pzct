@@ -80,7 +80,7 @@ fi
 # simple menu entries and functionalities
 func_version() { echo -e "pzct, Project Zomboid Command Tool.  Version 1.1, 19-04-2024.\n\n  This program is freeware for personal use only.\n\n  Special thanks:\n   to my friends Rostislav and Vadim\n   to joljaycups from Discord for help with func_message\n   to the people who haven't left my "The Camp" server in two years"; exit 0; }
 func_usage() { echo "Usage: pzct start | quit | backup | checkmods | restart | log | help will show you the full list"; exit 0; }
-func_server-console_backup() { cp -v "$Zomboid_DIR"/server-console.txt "$pzbackup_DIR"/server-console_"$(date +%F-%H:%M)".txt; }
+func_server-console_backup() { cp -v "$Zomboid_DIR"/server-console.txt "$pzbackup_DIR"/server-console_"$(date +%F-%H:%M)".txt && cat /dev/null > "$Zomboid_DIR"/server-console.txt; }
 func_log() { rm -f $PIDFILE; local DEFAULT=25; tail --lines ${1-$DEFAULT} -f "$Zomboid_DIR"/server-console.txt; }	#usable but rework is needed
 #
 
@@ -174,7 +174,7 @@ func_quit() {
         )
         arr_not=(
           "The first notification was sent in chat.\nPerforming quit in ${arr_sec[0]} seconds, press Ctrl+C to abort."
-          "The second notification was sent in chat.\nPerforming quit in ${arr_sec[0]} seconds, press Ctrl+C to abort."
+          "The second notification was sent in chat.\nPerforming quit in ${arr_sec[1]} seconds, press Ctrl+C to abort."
         )
       #end of arrays
 #
@@ -255,7 +255,6 @@ func_start() {
     echo -e "Starting the server...\n"
     nohup "$pzserver_DIR"/start-server.sh &>/dev/null &
   fi
-  exit 0;
   } # end of func_start
 #
 func_serverupdate() {
@@ -278,7 +277,7 @@ func_serverupdate() {
 #
 #######
 
-func_restart() { func_quit "quit" && func_backup && func_start; }
+func_restart() { func_quit "quit" && func_backup && func_start && exit 0; }
 
 #######
 #
@@ -297,18 +296,19 @@ func_checkmods() {
         echo $LINE
         case "$LINE" in
           *"CheckModsNeedUpdate: Mods need update"*)
-            echo -e "Mods need to be updated. Performing restart in 10 seconds, press Ctrl+C to abort.\n" >&2
+            echo -e "Mods need to be updated. Performing restart in 10 seconds, press Ctrl+C to abort.\n"
             local chmcount=0
             while [[ $chmcount -lt 10 ]]; do
               ((chmcount++))
-              echo -n "." >&2
+              echo -n "."
               sleep 1
             done
-            func_restart >&2;
+            echo -e "\n"
+            func_restart;
             ;;
           *"CheckModsNeedUpdate: Mods updated"*)
             echo -e "Nothing to do.\n"
-            exit 0;
+            exit 0
             ;;
         esac
       done
@@ -372,7 +372,7 @@ func_help() {
     -pid) func_pid;;
     -q | quit) func_quit $@; exit 0;;
     -r | restart) func_restart; exit 0;;
-    -s | start) func_start;;
+    -s | start) func_start && exit 0;;
     -serverupdate) func_serverupdate;;
     -t | thunder) func_thunder; exit 0;;
     -u | usage) func_usage;;
