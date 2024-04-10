@@ -182,7 +182,7 @@ func_quit() {
       for qcount in ${!arr_sec[@]}; do
         func_thunder;
         func_message ${arr_msg[$qcount]};
-        echo "${arr_not[$qcount]}" >&2;
+        echo -e "${arr_not[$qcount]}" >&2;
         sleep ${arr_sec[$qcount]};
       done
 #
