@@ -173,11 +173,12 @@ func_quit() {
           "Server restarts in ${arr_sec[1]} seconds. Reconnect in 3 minutes."
         )
         arr_not=(
-          "The first notification was sent. Performing quit in ${arr_sec[0]} seconds, press Ctrl+C to abort."
-          "The second notification was sent. Performing quit in ${arr_sec[0]} seconds, press Ctrl+C to abort."
+          "The first notification was sent in chat.\nPerforming quit in ${arr_sec[0]} seconds, press Ctrl+C to abort."
+          "The second notification was sent in chat.\nPerforming quit in ${arr_sec[0]} seconds, press Ctrl+C to abort."
         )
       #end of arrays
 #
+      echo -e "The quit command starts executing...\n"
       for qcount in ${!arr_sec[@]}; do
         func_thunder;
         func_message ${arr_msg[$qcount]};
