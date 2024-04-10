@@ -291,32 +291,27 @@ func_checkmods() {
 
   func_pid &>/dev/null;
   if [ $? -eq 0 ]; then
-    MODSNEEDUPDATE=0
     "$RCON" -c "$RCONYAML" checkModsNeedUpdate &>/dev/null
     tail -n 0 -f "$Zomboid_DIR"/server-console.txt | while read LINE
       do
         echo $LINE
         case "$LINE" in
           *"CheckModsNeedUpdate: Mods need update"*)
-            MODSNEEDUPDATE=1
-            break
+            echo -e "Mods need to be updated. Performing restart in 10 seconds, press Ctrl+C to abort.\n" >&2
+            local chmcount=0
+            while [[ $chmcount -lt 10 ]]; do
+              ((chmcount++))
+              echo -n "." >&2
+              sleep 1
+            done
+            func_restart >&2;
             ;;
           *"CheckModsNeedUpdate: Mods updated"*)
             echo -e "Nothing to do.\n"
-            break
+            exit 0;
             ;;
         esac
       done
-    if [[ "$MODSNEEDUPDATE" == "1"  ]]; then
-      echo -e "Mods need to be updated. Performing restart in 10 seconds, press Ctrl+C to abort.\n"
-      chmcount=0
-      while [[ chmcount -lt 10 ]]; do
-        ((chmcount++))
-        echo -n "."
-        sleep 1
-      done
-      func_restart;
-    fi
   else
     echo "$PID";
   fi
