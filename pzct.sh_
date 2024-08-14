@@ -1,0 +1,432 @@
+#!/bin/bash
+#
+# COPYRIGHT AGREEMENT
+# This program is freeware for personal use only.
+# You may modify the program for personal use, but no further distribution.
+# You may distribute only the unmodified program for non-commercial purposes.
+# After modification, leave the text "https://github.com/vsnegupal/pzct" next to shebang in your script.
+# Contact: https://t.me/vsnegupal vsnegupal@gmail.com
+# 2022-2024, by Roman Fuks, Novosibirsk, Russia
+#
+# functions section
+#
+function_checkperms() { # function
+local fname="function_checkperms"
+local PERMS=$1
+local TARGET=$2
+for ((chpcount=0; chpcount<${#PERMS}; chpcount++)); do
+	case "${PERMS:$chpcount:1}" in
+		e) [ -e "$TARGET" ] || { echo -e "[PZCT]_$(date +%H:%M:%S): $fname: $TARGET not exists." | tee -a "$LOGFILE"; return 1; } ;;
+		r) [ -r "$TARGET" ] || { echo -e "[PZCT]_$(date +%H:%M:%S): $fname: $TARGET isn't readable." | tee -a "$LOGFILE"; return 1; } ;;
+		w) [ -w "$TARGET" ] || { echo -e "[PZCT]_$(date +%H:%M:%S): $fname: $TARGET isn't writable." | tee -a "$LOGFILE"; return 1; } ;;
+		x) [ -x "$TARGET" ] || { echo -e "[PZCT]_$(date +%H:%M:%S): $fname: $TARGET isn't executable." | tee -a "$LOGFILE"; return 1; } ;;
+		*) { echo -e "[PZCT]_$(date +%H:%M:%S): $fname: Unknown option \"${PERMS:$chpcount:1}\"" | tee -a "$LOGFILE"; return 1; } ;;
+	esac
+done
+} # end of checkperms
+# usage: checkperms erwx "$TARGET" || return
+#
+function_version() { echo -e " pzct, Project Zomboid Console (or Command) Tool\n by Roman Fuks, Novosibirsk, Russia\n Version 1.1, 04-2024.\n\n This program is freeware for personal use only.\n\n Special thanks:\n  to some M.\n  to my friends Vadim and Rostislav\n  to joljaycups for help with \"message\" function\n  to the people who haven't left my pz server in two years\n"; }
+#
+function_ifrunning() {
+	echo -e "[PZCT]_$(date +%H:%M:%S): $fname: Seems PZCT is already running with PID $(cat $PIDFILE)" | tee -a "$LOGFILE"
+	exit 1
+} # end of function_ifrunning 
+#
+function_log() { # usable but rework is needed
+	function_checkperms er "$Zomboid_DIR/server-console.txt" || return
+	local DEFAULT=60 # 60 lines fit on my 24 inch monitor with 1920x1080 resolution if Putty is fullscreen
+	tail --lines ${1-$DEFAULT} -f "$Zomboid_DIR/server-console.txt"
+} # end of function_log
+#
+function_pid() {
+local fname="function_pid"
+PID=$(pgrep --full "ProjectZomboid64")
+local retcode=$?
+if [ $retcode = 0 ]; then
+	local pidmsg="[PZCT]_$(date +%H:%M:%S): $fname: Seems the SERVER PROCESS is running with PID $PID."	
+else
+	local pidmsg="[PZCT]_$(date +%H:%M:%S): $fname: Seems the SERVER PROCESS isn't running."
+fi
+printf "$pidmsg\n" | tee -a "$LOGFILE"
+return "$retcode"
+} # end of function_pid
+#
+function_backup-logfiles() {
+function_checkperms erw "$Zomboid_DIR/server-console.txt" || return
+if [ -s "$Zomboid_DIR/server-console.txt" ]; then
+	cp -v "$Zomboid_DIR/server-console.txt" "$pzbackup_DIR/server-console_$(date +%F-%H:%M).txt" | tee -a "$LOGFILE"
+	wait
+	cat /dev/null > "$Zomboid_DIR/server-console.txt"
+fi
+if [ -s "$LOGFILE" ]; then
+	cp -v "$LOGFILE" "$pzbackup_DIR/pzct_log_$(date +%F-%H:%M).log" | tee -a "$LOGFILE"
+	wait
+	rm -f "$LOGFILE" | tee -a "$LOGFILE"
+fi
+} # end of function_backup-logfiles
+#
+function_kill() {
+local fname="function_kill"
+function_pid
+if [ $? -eq 0 ]; then
+	PID=$(pgrep --full "ProjectZomboid64")
+	killtimer=1
+	kill -9 $PID &>/dev/null
+	while $(kill -0 $PID &>/dev/null); do
+		sleep 1
+		killtimer=$(( $killtimer + 1 ))
+	done
+	echo "[PZCT]_$(date +%H:%M:%S): $fname: SERVER PROCESS with PID $PID killed successfully in $killtimer seconds." # this command was added just for clarity
+	function_backup-logfiles &>/dev/null
+fi
+} # end of function_kill
+#
+#function_paranoid() {	# lorem ipsum
+#function_checkperms erw "$Zomboid_DIR/server-console.txt" || return
+#} # end of function_paranoid
+#
+function_message() {
+local fname="function_message"
+function_checkperms ex "$RCON" || return
+function_checkperms er "$RCONYAML" || return
+function_pid &>/dev/null
+if [ $? -eq 0 ]; then  
+	local MESSAGE=$(echo $* | sed -E 's/--m(essage)?//') # it works
+	#local MESSAGE=$(echo $* | sed 's/^[^ ]* //') # probably also works but not tested
+	#echo "$MESSAGE"
+	echo -e \'servermsg \" $MESSAGE\"\' | xargs "$RCON" -c "$RCONYAML" &>/dev/null	#Thanks again joljaycups
+	echo -e "[PZCT]_$(date +%H:%M:%S): $fname: Message \""$MESSAGE"\" sent." | tee -a "$LOGFILE"
+	#[ $PARANOID = 1 ] && paranoid
+fi
+} # end of function_message
+#
+function_players() {
+local fname="function_players"
+function_checkperms ex "$RCON" || return
+function_checkperms er "$RCONYAML" || return
+function_pid &>/dev/null
+if [ $? -eq 0 ]; then
+	"$RCON" -c "$RCONYAML" players
+	#[ $PARANOID = 1 ] && function_paranoid
+fi
+} # end of function_players
+#
+function_thunder() { # I love thunder sounds, and I will make everyone love it.
+local fname="function_thunder"
+function_checkperms ex "$RCON" || return
+function_checkperms er "$RCONYAML" || return
+function_pid &>/dev/null
+if [ $? -eq 0 ]; then
+	list_players=$(function_players)
+	mapfile -t array < <(echo "$list_players" | tail -n +2 | sed 's/^.*-//')
+	#echo ${array[@]}						# Actually, when you run "thunder username" from command line, it doesn't sound only for the specified player, but for everyone.
+	if [ ${#array[@]} -gt 0 ]; then					# However, there is no "all" option for rcon, and you have to specify an username. Therefore, we pick a random one.
+		#echo ${#array[@]}					# It won't work if server is empty, because there's no usernames. I made a haiku about it:
+		random_index=$(( $RANDOM % ${#array[@]} ))		# "Thunder sounds for all,
+		random_element=${array[$random_index]}			# But only if someone hear.
+		"$RCON" -c "$RCONYAML" "thunder $random_element"        # How poetic this is!"
+		#[ $PARANOID = 1 ] && function_paranoid
+	fi
+fi
+} # end of function_thunder
+#
+function_serverupdate() {
+local fname="function_serverupdate"
+[ -e $PIDFILE ] && function_ifrunning
+echo $$ > $PIDFILE
+#
+function_checkperms er "$steamcmd_DIR" || return
+function_checkperms ex "$steamcmd_DIR/steamcmd.sh" || return
+function_checkperms erw "$pzserver_DIR" || return
+function_pid
+if [ $? -eq 1 ]; then
+	cp -v "$pzserver_DIR/ProjectZomboid64.json" "$pzserver_DIR/ProjectZomboid64.json_copy" | tee -a "$LOGFILE" && \
+	"$steamcmd_DIR/steamcmd.sh" +force_install_dir "$pzserver_DIR" +login anonymous +app_update 380870 validate +quit && \
+	cp -v "$pzserver_DIR/ProjectZomboid64.json_copy" "$pzserver_DIR/ProjectZomboid64.json" | tee -a "$LOGFILE"  && \
+	rm -f $PIDFILE | tee -a "$LOGFILE"
+fi
+} # end of function_serverupdate
+#
+# the serious shit starts below
+#
+function_quit() {
+local fname="function_quit"
+[ -e $PIDFILE ] && function_ifrunning
+echo $$ > $PIDFILE
+#
+function_checkperms ex "$RCON" || return
+function_checkperms er "$RCONYAML" || return
+function_pid
+if [ $? -eq 0 ]; then
+	if [ -f "$MY_PATH/update_monitor" ]; then
+		rm -f "$MY_PATH/update_monitor"
+	fi
+# rework is needed
+	if [ "$#" -eq 1 -o "$2" = "" ]; then
+		#arrays
+        	arr_sec=($DELAY1 $DELAY2)
+### INGAME NOTIFICATIONS BELOW
+		arr_msg=(
+			"Server restarts in $DELAY1 seconds. Take a safe position."
+			"Server restarts in $DELAY2 seconds. Reconnect in 3 minutes."
+			)
+		#end of arrays
+#
+		echo -e "[PZCT]_$(date +%H:%M:%S): $fname: The QUIT command starts executing." | tee -a "$LOGFILE"
+		for qcount in ${!arr_sec[@]}; do
+			function_thunder &>/dev/null
+			function_message ${arr_msg[$qcount]}
+			sleep ${arr_sec[$qcount]}
+		done &
+		for ((concount=$((DELAY1 + DELAY2)); concount>=0; concount--)); do
+			echo -ne "[PZCT]_$(date +%H:%M:%S): $fname: Performing QUIT in $concount seconds, press Ctrl+C to abort.\r" | tee -a "$LOGFILE"
+			sleep 1
+		done
+#
+	elif [ "$#" -ge 2 -a "$2" != "-now" ]; then
+		echo -e "[PZCT]_$(date +%H:%M:%S): $fname: Unknown parameter \""$2"\". Operation aborted." | tee -a "$LOGFILE"
+		exit 1
+	elif [ "$2" = "-now" ]; then
+		echo -e "[PZCT]_$(date +%H:%M:%S): $fname: With -now option, the server will be stopped immediately without any notifications." | tee -a "$LOGFILE"
+	fi
+# end of rework is needed
+	sleep 5
+	"$RCON" -c "$RCONYAML" save &>/dev/null
+	sleep 5
+	"$RCON" -c "$RCONYAML" quit &>/dev/null && \
+	echo -e "[PZCT]_$(date +%H:%M:%S): $fname: QUIT command sent." | tee -a "$LOGFILE"
+	#[ $PARANOID = 1 ] && function_paranoid
+	while $(kill -0 $PID &>/dev/null); do
+		sleep 1
+	done
+	echo -e "[PZCT]_$(date +%H:%M:%S): $fname: The SERVER PROCESS stopped."
+	function_backup-logfiles &>/dev/null
+	rm -f "$PIDFILE"
+fi
+} # end of function_quit
+#
+function_backup() {
+local fname="function_backup"
+[ -e $PIDFILE ] && function_ifrunning
+echo $$ > $PIDFILE
+#
+function_checkperms rw "$pzbackup_DIR"
+#
+if [ ! -e "$pzbackup_DIR" ]; then
+	echo -e "[PZCT]_$(date +%H:%M:%S): $fname: PZCT can't find \"$pzbackup_DIR\"." | tee -a "$LOGFILE"
+	mkdir "$pzbackup_DIR"
+	echo -e "[PZCT]_$(date +%H:%M:%S): $fname: "$pzbackup_DIR" created." | tee -a "$LOGFILE"
+fi
+#
+echo -e "[PZCT]_$(date +%H:%M:%S): $fname: PZCT will use \"$pzbackup_DIR\" for backup." | tee -a "$LOGFILE"
+#
+	backup_dirs() { # backup_dirs
+	if [ -n "$(which pv 2>/dev/null)" -a -n "$(which pbzip2 2>/dev/null)" ]; then
+		#Advanced option for the CLI, shows archiving progress, takes less time due to the use of pbzip2. Requires pbzip2 and pv installed.
+		EXTENSION=bz2
+		tar cf - "$1" -P | pv -s $(du -sb "$1" | awk '{print $1}') | pbzip2 > "$2"
+	else
+		EXTENSION=gz
+		tar -cvzf "$2" "$1"	#it's highly likely to work for everyone
+	fi
+	} # end of backup_dirs
+#
+function_checkperms er "$Zomboid_DIR" || return
+function_pid
+if [ $? -eq 1 ]; then
+	function_backup-logfiles &>/dev/null
+	backup_dirs "" "" &>/dev/null # some workaround, honestly I don't remember the reason I made this
+	backup_dirs "$Zomboid_DIR/Logs" "$pzbackup_DIR/Logs_$(date +%F-%H:%M).tar.$EXTENSION" && \
+	rm -vrf "$Zomboid_DIR/Logs/*" && \
+	backup_dirs "$Zomboid_DIR" "$pzbackup_DIR/Zomboid_backup_$(date +%F-%H:%M).tar.$EXTENSION" && \
+	echo -e "[PZCT]_$(date +%H:%M:%S): $fname: The backup was done." | tee -a "$LOGFILE"
+	rm -f "$PIDFILE"
+fi
+} # end of function_backup
+#
+function_start() {
+local fname="function_start"
+[ -e $PIDFILE ] && function_ifrunning
+echo $$ > $PIDFILE
+#
+function_checkperms ex "$pzserver_DIR/start-server-jdk.sh" || return
+function_pid
+if [ $? -eq 1 ]; then
+#	
+	if [ $VAR_FILES -eq 1 ]; then
+		function_checkperms er "$pzbackup_DIR" || return
+		function_checkperms erw "$Zomboid_DIR" || return
+		echo -e "[PZCT]_$(date +%H:%M:%S): $var_fname: service option VAR_FILES = $VAR_FILES" | tee -a "$LOGFILE"
+		cp -v "$pzbackup_DIR/ProjectZomboid64.json" "$pzserver_DIR" | tee -a "$LOGFILE"
+		cp -v -t "$Zomboid_DIR/Server" "$pzbackup_DIR/servertest_SandboxVars.lua" "$pzbackup_DIR/servertest.ini" | tee -a "$LOGFILE"
+	fi	
+#
+	function_backup-logfiles
+	echo -e "[PZCT]_$(date +%H:%M:%S): $fname: Starting the server." | tee -a "$LOGFILE"
+	nohup $pzserver_DIR/start-server-jdk.sh &>/dev/null &
+	disown $!
+	while [ -z $PID ]; do 
+		function_pid &>/dev/null
+	done
+	sleep 1
+	echo -e "[PZCT]_$(date +%H:%M:%S): $fname: Server just started with PID $PID" | tee -a "$LOGFILE"
+	touch "$MY_PATH/update_monitor"
+	rm -f "$PIDFILE"
+fi
+} # end of function_start
+#
+function_restart() {
+local fname="function_restart"
+function_pid
+if [ $? -eq 0 ]; then
+	echo -e "[PZCT]_$(date +%H:%M:%S): $fname: Executing restart." | tee -a "$LOGFILE"
+	function_quit "quit"
+	function_backup
+	function_start
+fi
+} # end of function_restart
+#
+function_checkmods() {
+local fname="function_checkmods"
+[ -e $PIDFILE ] && function_ifrunning
+echo $$ > $PIDFILE
+#
+function_checkperms ex "$RCON" || return
+function_checkperms er "$RCONYAML" || return
+function_checkperms er "$Zomboid_DIR/server-console.txt" || return
+function_pid
+if [ $? -eq 0 ]; then
+	if [ -f "$MY_PATH/update_monitor" ]; then
+		cat /dev/null > "$MY_PATH/update_monitor"
+		# the easiest and the same time effective check is
+		$RCON -c $RCONYAML checkModsNeedUpdate &>/dev/null & sleep 1 # need to adjust sleep N if not working correctly
+		tail -n 5 "$Zomboid_DIR/server-console.txt" > "$MY_PATH/update_monitor" # need to adjust -n option if not working correctly
+		local VARUPDMON=$(cat "$MY_PATH/update_monitor")
+		#echo "$VARUPDMON"
+		case "$VARUPDMON" in
+			*"CheckModsNeedUpdate: Mods need update"*)
+				echo -e "[PZCT]_$(date +%H:%M:%S): $fname: Mods need update." | tee -a "$LOGFILE"
+				local chmcount=0
+				while [ $chmcount -ge 10 ]; do
+					echo -ne "Performing restart in $chmcount seconds, press Ctrl+C to abort.\r"
+					((chmcount--))
+					sleep 1; done;
+				echo -e "\n"
+				rm -f "$MY_PATH/update_monitor"
+				#[ $PARANOID = 1 ] && function_paranoid
+				rm -f "$PIDFILE"
+				function_restart
+				;;
+			*"CheckModsNeedUpdate: Mods updated"*)
+				echo -e "[PZCT]_$(date +%H:%M:%S): $fname: Mods updated. Nothing to do." | tee -a "$LOGFILE"
+				rm -f "$PIDFILE"
+				#[ $PARANOID = 1 ] && function_paranoid
+				;;
+		esac
+	else
+	# File "$MY_PATH/update_monitor" doesn't exist.
+	# According to the script logic, this can be only if quit or start is in progress.
+		echo -e "[PZCT]_$(date +%H:%M:%S): $fname: File $MY_PATH/update_monitor doesn't exist.
+In some cases, checking for updates may be suspended.\nIf server is running normally, try \"touch ${MY_PATH}/update_monitor\"\nOperation aborted." | tee -a "$LOGFILE"
+	fi
+fi
+} # end of function_checkmods
+#
+function_install() {
+[ ! -e "$HOME/pzct" ] && mkdir "$HOME/pzct"
+cp -v "$MY_PATH/pzct.sh_" "$HOME/pzct/pzct.sh"
+[ ! -e "$HOME/pzct/pzct.conf" ] && cp -v "$MY_PATH/pzct.conf_default" "$HOME/pzct/pzct.conf"
+[ ! -e "$HOME/pzct/rcon" ] && tar -xvzf "$MY_PATH/rcon.tar.gz" && cp -v "$MY_PATH/rcon" "$HOME/pzct/rcon"
+chmod +x "$HOME/pzct/rcon"
+[ ! -e "$HOME/pzct/rcon.yaml" ] && cp -v "$MY_PATH/rcon.yaml_default" "$HOME/pzct/rcon.yaml"
+crontab -l > "$MY_PATH/current_crontab"
+if [ ! grep -q "pzct.sh --checkmods" current_crontab ]; then
+	(crontab -l ; echo "*/5 * * * * $(echo "$HOME")/pzct/pzct.sh --checkmods 2>&1") | crontab -
+fi
+if [ ! grep -q "pzct.sh --restart" current_crontab ]; then
+	(crontab -l ; echo "20 16 * * * $(echo "$HOME")/pzct/pzct.sh --restart 2>&1") | crontab -
+fi
+rm -f "$MY_PATH/current_crontab"
+if [ ! grep -q "pzct.sh" "$HOME/.bashrc" ]; then
+	echo -e "\nalias pzct=\"$(echo "$HOME")/pzct/pzct.sh\"\n" >> "$HOME/.bashrc"
+fi
+echo -e "  Now edit config files. Install \"mc\", if not yet.\n  Then run \"mcedit $HOME/pzct/pzct.conf\", edit and save it.\n  Then run \"mcedit $HOME/pzct/rcon.yaml\", edit and save it.\n\n  After it, try to run \"pzct --help\""
+exit 0
+#
+} # end of function_install
+#
+function_help() {
+echo -e "  usage: pzct --command
+    --b or --backup		perform a backup
+    --chm or --checkmods	check if mods need update
+    --help			show this message
+
+    --install			install or reinstall pzct with the default options
+				(existing config files will not be changed)
+
+    --kill			immediately terminate the server process (without using rcon)
+    --l N or --log N		display the last N lines of server-console.txt
+				and then monitors the file (25 lines by default)
+
+    --m text or --message text	displays the message \"text\" in chat and in the middle of the screen
+    --p or --players		list all connected players (if any)
+    --pid			just show PID of the server process (if it\'s running)
+    --q or --quit		send the \"quit\" command to the server using rcon
+				with chat notifications and 120 seconds delay
+
+    --q -now or --quit -now	send the same command immediately without notifications
+    --r or --restart		sequentially execute quit, backup and start
+				done mostly for cron
+
+    --s or --start		run the start-server.sh script in the background
+    --serverupdate		update the server application with steamcmd.sh
+    --thunder			thunder sounds for everyone
+    --version			show the version of pzct\n"
+} # end of function_help
+#
+# preparation section
+#
+MY_PATH="$(dirname -- "${BASH_SOURCE[0]}")"	# relative
+MY_PATH="$(cd -- "$MY_PATH" && pwd)"		# absolutized and normalized
+[ -z "$MY_PATH" ] && { echo -e "[PZCT]_$(date +%H:%M:%S): Directory $MY_PATH isn't accessible for some reason." | tee -a $LOGFILE; exit 1; }
+#
+PIDFILE="$MY_PATH/pzct.pid"
+trap "rm -f $PIDFILE; echo -e "\n"; exit 1;" 1 2 8 9 13 15 20 23 
+#
+if [ "$1" = "--kill" ]; then
+	function_kill
+	exit 0
+fi
+if [ "$1" = "--install" ]; then
+	function_install
+	exit 0
+fi
+#
+function_checkperms er $(echo "$MY_PATH") || return
+function_checkperms erx "$MY_PATH/pzct.sh" || return
+function_checkperms er "$MY_PATH/pzct.conf" || return
+#echo -e "Script:    $MY_PATH/pzct.sh\nConf file: $MY_PATH/pzct.conf"
+source "$MY_PATH/pzct.conf" # now we can go further
+[ ! -z "$LOGFILE" -a ! -e "$LOGFILE" ] && touch $LOGFILE
+#
+# menu section
+#
+case $1 in
+ --b | --backup) function_backup;;
+ --chm | --checkmods) function_checkmods;;
+ --help) function_help;;
+ --l | --log) function_log $2;;
+ --m | --message) function_message $*;;
+ --p | --players) function_players;;
+ --pid) function_pid;;
+ --q | --quit) function_quit $@;;
+ --r | --restart) function_restart;;
+ --s | --start) function_start;;
+ --serverupdate) function_serverupdate;;
+ --t | --thunder) function_thunder;;
+ --version) function_version;;
+ *) echo -e "  pzct: You must specify one of the commands.\n  Run \"pzct --help\" to view the commands list." && exit 0; ;;
+esac
+[ -e $PIDFILE ] && rm -f $PIDFILE;
+exit 0

@@ -1,0 +1,17 @@
+# This config in its original state assumes that LOCAL pzct will send commands to LOCAL server app using LOCAL rcon.
+# In other words, and if you are new to Linux, I assume you will be using pzct in the same OS where the server app is running.
+# Then you may not change the address in the line below. Leave it as "127.0.0.1".
+# Speaking of port, it is actually possible that you will have another rcon that you will use from somewhere else.
+# And then you may have the port changed in the servertest.ini file, and/or that port may be opened outward from the local network.
+# Either way, the port should match what you have in the servertest.ini file in the "RCONPort" parameter.
+# If you are not going to change the port, and/or open it outward, then leave the line as
+# address: "127.0.0.1:27015"
+default:
+  address: "127.0.0.1:27015" # host:port, for example 127.0.0.1:16260
+# The same thing here, the pasword should match what you have in the servertest.ini file in the "RCONPassword" parameter.
+# If you will be managing the server ONLY from the same OS, and/or your port is NOT open to the outside, you can change the "RCONPassword" parameter to "hesoyam".
+# Otherwise, you need to change "password" THERE to whatever you have in ervertest.ini file in the "RCONPassword" field
+  password: "hesoyam"
+  log: ""
+  type: "" # rcon, telnet, web.
+  timeout: "10s"

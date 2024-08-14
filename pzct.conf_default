@@ -1,0 +1,18 @@
+# required
+pzserver_DIR=""	# e.g. /home/user/pzserver
+# required
+Zomboid_DIR=""	# e.g. /home/user/Zomboid
+#
+pzbackup_DIR="$HOME/pzbackup"	# e.g. /home/user/backup (default=$HOME/pzbackup)	# keep unchanged if using "--install" option
+RCON="$MY_PATH/rcon"		# e.g. /home/user/rcon (default=$MY_PATH/rcon)		# keep unchanged if using "--install" option
+RCONYAML="$MY_PATH/rcon.yaml"	# e.g. /home/user/rcon.yaml (default=$MY_PATH/rcon.yaml)# keep unchanged if using "--install" option
+#
+steamcmd_DIR=""	# e.g. /home/user/steamcmd	# may keep unchanged if you will manually update the server app
+#
+# service options
+DELAY1=120	# Time until server shutdown in second, should be higher (default=120)
+DELAY2=10	# Time for imminent server shutdown notification in seconds, should be lower (default=10)
+#
+LOGFILE="$MY_PATH/pzct.log"
+#
+VAR_FILES=0		# default=0
