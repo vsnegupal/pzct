@@ -238,7 +238,7 @@ if [ $? -eq 1 ]; then
 	function_backup-logfiles &>/dev/null
 	backup_dirs "" "" &>/dev/null # some workaround, honestly I don't remember the reason I made this
 	backup_dirs "$Zomboid_DIR/Logs" "$pzbackup_DIR/Logs_$(date +%F-%H:%M).tar.$EXTENSION" && \
-	rm -vrf "$Zomboid_DIR/Logs/*" && \
+	rm -vrf $Zomboid_DIR/Logs/* && \
 	backup_dirs "$Zomboid_DIR" "$pzbackup_DIR/Zomboid_backup_$(date +%F-%H:%M).tar.$EXTENSION" && \
 	echo -e "[PZCT]_$(date +%H:%M:%S): $fname: The backup was done." | tee -a "$LOGFILE"
 	rm -f "$PIDFILE"
